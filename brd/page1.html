@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BRD Explained — Page 1 | Medical Affairs AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#F0F2F6;color:#1E293B;}
+.topnav{background:#1E3A5F;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;}
+.pagenav{display:flex;gap:6px;}
+.pagenav a{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;text-decoration:none;color:#93C5FD;border:1.5px solid rgba(255,255,255,0.15);}
+.pagenav a.active{background:#2563EB;color:#fff;border-color:#2563EB;}
+.pagenav a:hover{background:rgba(255,255,255,0.1);}
+.hero{background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%);padding:50px 40px 40px;color:#fff;}
+.hero-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);display:inline-block;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:16px;}
+.hero h1{font-size:32px;font-weight:700;line-height:1.25;margin-bottom:12px;}
+.hero-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px;}
+.meta-chip{background:rgba(255,255,255,0.12);border-radius:8px;padding:10px 16px;font-size:12px;}
+.meta-chip b{display:block;font-size:11px;opacity:.7;margin-bottom:3px;letter-spacing:.5px;}
+.content{max-width:960px;margin:0 auto;padding:36px 24px;}
+.section{background:#fff;border-radius:14px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.07);margin-bottom:28px;}
+.section-badge{display:inline-block;background:#EFF6FF;color:#2563EB;font-size:10px;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.section h2{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:8px;}
+.section h3{font-size:16px;font-weight:600;color:#1E3A5F;margin:20px 0 10px;}
+.section p{font-size:14px;color:#374151;line-height:1.7;margin-bottom:12px;}
+.section ul{padding-left:20px;margin-bottom:12px;}
+.section ul li{font-size:14px;color:#374151;line-height:1.8;}
+.section ul li b{color:#1E3A5F;}
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+thead tr{background:#1E3A5F;color:#fff;}
+thead th{padding:10px 14px;text-align:left;font-weight:600;}
+tbody tr:nth-child(even){background:#F8FAFC;}
+tbody td{padding:9px 14px;border-bottom:1px solid #F1F5F9;color:#374151;}
+tbody td b{color:#1E3A5F;}
+/* Code blocks */
+.code-block{background:#0F172A;border-radius:10px;padding:18px 20px;font-family:'Courier New',monospace;font-size:12px;color:#94A3B8;overflow-x:auto;margin:14px 0;line-height:1.7;}
+.code-block .c-green{color:#4ADE80;}
+.code-block .c-blue{color:#60A5FA;}
+.code-block .c-yellow{color:#FCD34D;}
+.code-block .c-red{color:#F87171;}
+/* Alert boxes */
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;display:flex;gap:12px;align-items:flex-start;}
+.alert-caution{background:#FEF2F2;border-left:4px solid #DC2626;color:#991B1B;}
+.alert-note{background:#EFF6FF;border-left:4px solid #2563EB;color:#1D4ED8;}
+.alert-warning{background:#FEF9C3;border-left:4px solid #CA8A04;color:#92400E;}
+.alert-tip{background:#F0FDF4;border-left:4px solid #16A34A;color:#166534;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+/* Request quote */
+.request-quote{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px 18px;font-size:13px;font-style:italic;color:#1D4ED8;margin:12px 0;}
+/* Timeline */
+.timeline{background:#0F172A;border-radius:10px;padding:20px 24px;margin:12px 0;}
+.tl-row{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.tl-week{color:#60A5FA;font-size:11px;font-weight:600;width:80px;flex-shrink:0;font-family:'Courier New',monospace;}
+.tl-bar{height:22px;background:#2563EB;border-radius:4px;display:flex;align-items:center;padding:0 10px;font-size:11px;color:#fff;font-weight:500;}
+.tl-total{margin-top:12px;padding-top:12px;border-top:1px solid #334155;color:#F87171;font-size:12px;font-weight:600;font-family:'Courier New',monospace;}
+/* Pain point header */
+.pp-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.pp-num{width:42px;height:42px;background:#2563EB;color:#fff;border-radius:10px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pp-title{font-size:21px;font-weight:700;color:#1E3A5F;}
+/* Footer nav */
+.footnav{max-width:960px;margin:0 auto;padding:20px 24px 40px;display:flex;justify-content:flex-end;gap:12px;}
+.btn-nav{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;}
+.btn-next{background:#2563EB;color:#fff;}
+.btn-prev{background:#fff;color:#1E3A5F;border:1.5px solid #E2E8F0;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">💊 Medical Affairs AI — BRD Explained</div>
+  <div class="pagenav">
+    <a href="page1.html" class="active">Page 1: Intro + Pain Points 1–2</a>
+    <a href="page2.html">Page 2: Pain Points 3–4</a>
+    <a href="page3.html">Page 3: Pain Point 5 + Summary</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">📄 BUSINESS REQUIREMENTS DOCUMENT</div>
+  <h1>Medical Affairs AI Platform<br>BRD Pain Points — Explained</h1>
+  <div style="font-size:14px;opacity:.85;margin-top:8px;">Why major Pharma companies like GSK and Boehringer Ingelheim need an Agentic AI system for Medical Affairs</div>
+  <div class="hero-meta">
+    <div class="meta-chip"><b>DOCUMENT TYPE</b>Business Requirements Deep Dive</div>
+    <div class="meta-chip"><b>DRUG EXAMPLE</b>Zejula (Niraparib) — Ovarian Cancer</div>
+    <div class="meta-chip"><b>AUDIENCE</b>Technical implementation team</div>
+    <div class="meta-chip"><b>PAGE</b>1 of 3 — Intro + Pain Points 1 &amp; 2</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Who is this for -->
+  <div class="section">
+    <div class="section-badge">🏥 CONTEXT</div>
+    <h2>Who Is This For?</h2>
+    <p>A <b>Medical Affairs Director</b> at GSK manages a cancer drug called <b>Zejula (Niraparib)</b>. Their job:</p>
+    <ul>
+      <li>Prove the drug works with <b>real-world evidence (RWE)</b></li>
+      <li>Educate oncologists (<b>HCPs — Healthcare Professionals</b>) about the drug</li>
+      <li>Submit <b>evidence packages</b> to regulators (FDA, EMA) and payers (Aetna, NICE)</li>
+    </ul>
+    <p>Every one of these tasks requires collecting data from multiple sources — <b>manually, today</b>. This BRD defines the AI system that will automate it.</p>
+  </div>
+
+  <!-- Pain Point 1 -->
+  <div class="section">
+    <div class="pp-header">
+      <div class="pp-num">1</div>
+      <div class="pp-title">Manually Stitching Together Data Sources</div>
+    </div>
+
+    <h3>What Are the 5 Data Sources?</h3>
+    <table>
+      <thead><tr><th>Source</th><th>What It Contains</th><th>Who Provides It</th><th>Format</th></tr></thead>
+      <tbody>
+        <tr><td><b>EHR (Electronic Health Records)</b></td><td>Patient diagnosis, prescriptions, lab results, visit notes</td><td>Hospitals using Epic / Cerner</td><td>HL7 FHIR, CSV exports</td></tr>
+        <tr><td><b>Disease Registries</b></td><td>Disease-specific patient cohorts with long-term outcomes</td><td>Government / Academic (e.g. SEER)</td><td>CSV, SAS datasets</td></tr>
+        <tr><td><b>Claims Data</b></td><td>Insurance billing — who got what drug, when, at what cost</td><td>IQVIA, Optum, CPRD</td><td>Structured SQL tables</td></tr>
+        <tr><td><b>Published Literature</b></td><td>Peer-reviewed research papers</td><td>PubMed, Embase</td><td>PDF, XML</td></tr>
+        <tr><td><b>HTA Submissions</b></td><td>Health Technology Assessment dossiers submitted to NICE, FDA</td><td>Pharma companies / Government</td><td>Word, PDF</td></tr>
+      </tbody>
+    </table>
+
+    <h3>What Real EHR Data Looks Like (Epic Export)</h3>
+    <div class="code-block">
+Patient Record — Epic EHR Export (CSV)
+┌────────────┬──────┬────────────────────────┬───────────────┬──────────────┬─────────────┐
+│ patient_id │ age  │ diagnosis_code (ICD-10) │ drug_name     │ start_date   │ end_date    │
+├────────────┼──────┼────────────────────────┼───────────────┼──────────────┼─────────────┤
+│ <span class="c-blue">PT-00123</span>   │ 62   │ <span class="c-green">C56.9 (Ovarian Cancer)</span>  │ <span class="c-yellow">Niraparib</span>     │ 2023-03-15   │ 2023-09-20  │
+│ <span class="c-blue">PT-00456</span>   │ 57   │ <span class="c-green">C56.1</span>                   │ <span class="c-yellow">Olaparib</span>      │ 2023-01-10   │ 2023-07-15  │
+│ <span class="c-blue">PT-00789</span>   │ 71   │ <span class="c-green">C56.2</span>                   │ <span class="c-yellow">Niraparib</span>     │ 2022-11-01   │ 2023-05-30  │
+└────────────┴──────┴────────────────────────┴───────────────┴──────────────┴─────────────┘</div>
+
+    <h3>What Real Claims Data Looks Like (Optum)</h3>
+    <div class="code-block">
+Insurance Claims — Optum Database Export
+┌────────────┬──────────────┬─────────────┬──────────────┬────────────┬───────────┬──────────────┐
+│ claim_id   │ patient_id   │ ndc_code    │ drug_name    │ dose_mg    │ cost_usd  │ claim_date   │
+├────────────┼──────────────┼─────────────┼──────────────┼────────────┼───────────┼──────────────┤
+│ <span class="c-blue">CLM-9912</span>   │ PT-00123     │ <span class="c-yellow">54868-6106</span>  │ Niraparib    │ 200mg      │ <span class="c-green">$18,450</span>   │ 2023-03-18   │
+│ <span class="c-blue">CLM-9913</span>   │ PT-00456     │ <span class="c-yellow">00310-0489</span>  │ Olaparib     │ 300mg      │ <span class="c-green">$21,200</span>   │ 2023-01-12   │
+│ <span class="c-blue">CLM-9914</span>   │ PT-00789     │ <span class="c-yellow">54868-6106</span>  │ Niraparib    │ 100mg      │ <span class="c-green">$9,225</span>    │ 2022-11-05   │
+└────────────┴──────────────┴─────────────┴──────────────┴────────────┴───────────┴──────────────┘</div>
+
+    <h3>The Manual "Stitching" Problem</h3>
+    <div class="request-quote">📋 Request: "Show me outcomes for Zejula patients aged 55+ in the US, 2023"</div>
+    <div class="code-block">
+<span class="c-blue">Step 1</span> → Analyst logs into Optum portal
+         Submits data extraction request
+         Waits <span class="c-red">2 weeks</span> for Optum team to run the query
+         Receives: claims_export_optum_2023.csv (300MB)
+
+<span class="c-blue">Step 2</span> → Analyst logs into SEER Registry
+         Downloads cancer registry export → seer_oc_patients_2023.sas7bdat
+         Converts SAS → Excel manually
+
+<span class="c-blue">Step 3</span> → Analyst goes to PubMed
+         Searches: "Niraparib real world evidence ovarian cancer 2020-2024"
+         Returns <span class="c-yellow">847 papers</span> → reads abstracts one by one
+         Marks 40 as relevant → copy-pastes key data to Word
+
+<span class="c-blue">Step 4</span> → Analyst opens all files side by side
+         <span class="c-red">PROBLEM:</span> Optum uses NDC drug codes, SEER uses ICD-O codes
+         Analyst manually maps NDC → ICD codes using a reference table
+
+<span class="c-blue">Step 5</span> → Creates summary PowerPoint → Sends to Medical Director
+
+<span class="c-red">⏱  Total Time: 3–4 WEEKS for ONE request</span></div>
+
+    <div class="alert alert-caution">
+      <div class="alert-icon">🚨</div>
+      <div><b>CAUTION:</b> The analyst is the "glue" between 5 incompatible systems. Remove the analyst and nothing works. This is not scalable for 450+ IEP requests per year.</div>
+    </div>
+  </div>
+
+  <!-- Pain Point 2 -->
+  <div class="section">
+    <div class="pp-header">
+      <div class="pp-num">2</div>
+      <div class="pp-title">Each Evidence Cycle Takes Weeks to Months</div>
+    </div>
+
+    <h3>What is an Evidence Package (IEP)?</h3>
+    <p>When Aetna (a US insurance company) considers whether to cover Zejula, they ask GSK:</p>
+    <div class="request-quote">💬 "Prove Zejula is more effective than Olaparib for platinum-resistant Ovarian Cancer in your US patient population"</div>
+    <p>GSK must submit an <b>Integrated Evidence Plan (IEP)</b> — a structured dossier containing:</p>
+    <ul>
+      <li>Clinical trial data</li>
+      <li>Real-world effectiveness data</li>
+      <li>Cost-effectiveness analysis</li>
+      <li>Comparative effectiveness vs competitors</li>
+      <li>Geographic breakdowns</li>
+    </ul>
+
+    <h3>The Manual IEP Timeline (13 weeks)</h3>
+    <div class="timeline">
+      <div class="tl-row"><div class="tl-week">Week 1–2</div><div class="tl-bar" style="width:280px;">Analyst identifies data sources</div></div>
+      <div class="tl-row"><div class="tl-week">Week 3–4</div><div class="tl-bar" style="width:260px;">Data team extracts from IQVIA/Optum</div></div>
+      <div class="tl-row"><div class="tl-week">Week 5–6</div><div class="tl-bar" style="width:300px;">Statistician runs comparative analysis</div></div>
+      <div class="tl-row"><div class="tl-week">Week 7–8</div><div class="tl-bar" style="width:240px;">Medical writer drafts IEP document</div></div>
+      <div class="tl-row"><div class="tl-week">Week 9–10</div><div class="tl-bar" style="width:260px;background:#7C3AED;">Medical Director review (round 1)</div></div>
+      <div class="tl-row"><div class="tl-week">Week 11–12</div><div class="tl-bar" style="width:280px;background:#CA8A04;">Legal / MLR review — Veeva Vault</div></div>
+      <div class="tl-row"><div class="tl-week">Week 13</div><div class="tl-bar" style="width:160px;background:#16A34A;">Final submission to Aetna ✅</div></div>
+      <div class="tl-total">TOTAL: 13 WEEKS (3+ MONTHS) per evidence package</div>
+    </div>
+
+    <h3>What a Real IEP Structure Looks Like</h3>
+    <table>
+      <thead><tr><th>IEP Section</th><th>Content</th><th>Who Writes It Today</th></tr></thead>
+      <tbody>
+        <tr><td><b>Executive Summary</b></td><td>Drug overview, therapy area, unmet need</td><td>Medical Writer</td></tr>
+        <tr><td><b>Evidence Gap Analysis</b></td><td>What data exists vs what payers need</td><td>Analyst + Medical Director</td></tr>
+        <tr><td><b>RWE Summary</b></td><td>Real-world patient outcomes from claims/registry</td><td>Statistician</td></tr>
+        <tr><td><b>Competitor Landscape</b></td><td>How Zejula compares to Olaparib, Rucaparib</td><td>Analyst</td></tr>
+        <tr><td><b>Study Recommendations</b></td><td>Which RWE studies should be designed to fill gaps</td><td>Medical Director</td></tr>
+        <tr><td><b>Geographic Tailoring</b></td><td>US vs EU vs APAC evidence availability</td><td>Regional MSL teams</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-note">
+      <div class="alert-icon">ℹ️</div>
+      <div><b>NOTE:</b> GSK manages 15+ drugs across 30+ markets. That's potentially <b>450+ IEPs per year</b> — completely impossible to do manually at this scale. Each one takes 3 months.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footnav">
+  <a href="page2.html" class="btn-nav btn-next">Page 2: Pain Points 3 &amp; 4 →</a>
+</div>
+
+</body>
+</html>
