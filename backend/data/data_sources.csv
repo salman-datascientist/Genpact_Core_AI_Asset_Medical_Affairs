@@ -1,0 +1,6 @@
+source_id,name,type,regions
+DS_IQVIA,IQVIA PharMetrics,Claims,US;EU5
+DS_CPRD,CPRD EHR,EHR,UK
+DS_OPTUM,Optum Clinformatics,Claims+EHR,US
+DS_FLAT,Flatiron Health,Oncology EHR,US
+DS_OMOP,OMOP CDM Registry,Registry,Multi

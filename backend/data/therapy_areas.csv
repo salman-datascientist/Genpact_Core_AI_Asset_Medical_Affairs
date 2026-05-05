@@ -1,0 +1,6 @@
+therapy_area_id,name,description
+TA_ONCO_2L_NSCLC,2L NSCLC,Second-line non-small cell lung cancer after platinum failure
+TA_ONCO_MCRC,mCRC,Metastatic colorectal cancer third-line and beyond
+TA_CARDIO_HF,Heart Failure,HFrEF and worsening chronic HF populations
+TA_IMMUNO_RA,Rheumatoid Arthritis,Biologic-experienced RA
+TA_NEURO_MS,Multiple Sclerosis,Relapsing forms of MS

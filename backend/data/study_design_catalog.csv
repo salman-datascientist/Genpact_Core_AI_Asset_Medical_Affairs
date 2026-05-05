@@ -1,0 +1,8 @@
+design_id,name,study_type,duration_months,cost_tier,primary_data_sources,notes
+SD001,US claims retrospective cohort,Retrospective cohort,18,Medium,"DS_IQVIA,DS_OPTUM",Fast landscape anchoring; confounding controls required
+SD002,UK CPRD matched cohort,Retrospective cohort,24,Medium,"DS_CPRD",Strong for EU payer dialogue when OMOP-mapped
+SD003,Flatiron oncology deep phenotype,Cohort with NLP augmentation,30,High,"DS_FLAT",Oncology-specific endpoints and line-of-therapy
+SD004,Registry linkage feasibility,Registry linkage,36,High,"DS_OMOP,DS_CPRD",Enables external comparator arms where trial gaps exist
+SD005,Pragmatic cluster-randomized trial,Pragmatic trial,48,Very High,"DS_IQVIA,DS_OPTUM",When causal inference priority exceeds observational limits
+SD006,Target trial emulation,Emulated trial,20,High,"DS_FLAT,DS_IQVIA",Addresses immortal time and selection bias in oncology sequences
+SD007,EU multi-database replication,External validation,18,High,"DS_CPRD,DS_OMOP",Strengthens regulatory and payer generalizability

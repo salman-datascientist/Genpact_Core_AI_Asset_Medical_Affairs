@@ -1,0 +1,5 @@
+geography_id,name,regulator_summary,rwd_sources
+GEO_US,United States,FDA RWE guidance; Sentinel-style surveillance expectations,"DS_IQVIA,DS_FLAT,DS_OPTUM"
+GEO_EU5,EU5 (aggregated),EMA RWE framework; national HTA heterogeneity,"DS_CPRD,DS_OMOP"
+GEO_JP,Japan,PMDA consultations; claims-linked registries,"DS_IQVIA"
+GEO_APAC,APAC (selected markets),Country-specific HTA; hospital claims,"DS_OPTUM,DS_OMOP"

@@ -1,0 +1,26 @@
+study_id,title,sponsor,year,drug_id,therapy_area_id,geography_id,study_design,outcome_summary,url
+RWE001,INSIGHT-US PD-1 second-line NSCLC outcomes,PharmaCo Alpha,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_US,Retrospective cohort,"Medianrw OS 14.2 mo vs 11.8 mo historical comparator (claims-adjusted).",https://mock.rwe/001
+RWE002,EU5 claims OS proxies NSCLC landscape,PharmaCo Alpha,2022,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_EU5,Multi-database cohort,PFS proxy hazard ratio 0.82 vs chemotherapy cohort in CPRD-linked analysis.,https://mock.rwe/002
+RWE003,mCRC anti-VEGF sequencing CORAL registry,PharmaCo Alpha,2024,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_US,Registry linkage,Third-line medianrw duration on therapy 4.1 mo; discontinuation top reasons toxicity and progression.,https://mock.rwe/003
+RWE004,mCRC EU persistence CORE study,PharmaCo Alpha,2023,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_EU5,Cohort,Persistence lower in elderly with baseline liver dysfunction.,https://mock.rwe/004
+RWE005,CardioRx HF hospitalization Sentinel-like pilot,PharmaCo Beta,2024,DRUG_CARD_Z,TA_CARDIO_HF,GEO_US,EHR cohort,HF hospitalization HR 0.85 vs propensity-matched ARNI-ineligible cohort.,https://mock.rwe/005
+RWE006,CardioRx UK CPRD replication,PharmaCo Beta,2023,DRUG_CARD_Z,TA_CARDIO_HF,GEO_EU5,Cohort,Consistent directionality with US cohort though magnitude attenuated.,https://mock.rwe/006
+RWE007,ImmunoBlock infection surveillance network,PharmaCo Gamma,2024,DRUG_IMMU_W,TA_IMMUNO_RA,GEO_US,Surveillance cohort,SIR for serious infection 1.2 vs TNFi historical controls in biologic-experienced patients.,https://mock.rwe/007
+RWE008,ImmunoBlock EU registry inception cohort,PharmaCo Gamma,2023,DRUG_IMMU_W,TA_IMMUNO_RA,GEO_EU5,Prospective registry,12-month persistence 68% with dose adjustments common in first 90 days.,https://mock.rwe/008
+RWE009,NeuroPlus integrated delivery cohort,PharmaCo Delta,2024,DRUG_NEURO_V,TA_NEURO_MS,GEO_US,Cohort,ARR 0.22 vs platform therapy after IPTW in claims-EHR linked cohort.,https://mock.rwe/009
+RWE010,NeuroPlus APAC chart abstraction program,PharmaCo Delta,2023,DRUG_NEURO_V,TA_NEURO_MS,GEO_APAC,Chart review,Relapse rates aligned with global trials in tertiary centers.,https://mock.rwe/010
+RWE011,NSCLC biomarker testing delays impact on OS,Consortium,2023,,TA_ONCO_2L_NSCLC,GEO_US,Observational,Delayed PD-L1 testing associated with later immunotherapy initiation.,https://mock.rwe/011
+RWE012,mCRC sidedness and anti-angiogenic benefit,Consortium,2022,,TA_ONCO_MCRC,GEO_EU5,Cohort,Left-sided tumors showed longer duration of therapy in third line.,https://mock.rwe/012
+RWE013,HF GDMT contraindication patterns,Consortium,2024,,TA_CARDIO_HF,GEO_US,EHR,Renal contraindications common barrier to full GDMT stack.,https://mock.rwe/013
+RWE014,RA cardiovascular risk across lines,Consortium,2023,,TA_IMMUNO_RA,GEO_EU5,Meta-RWE,MACE rates stable across second-line biologic switches in CPRD.,https://mock.rwe/014
+RWE015,MS relapse seasonality RWD,Consortium,2022,,TA_NEURO_MS,GEO_US,Cohort,Seasonal relapse peaks modestly correlated with viral infection coding frequency.,https://mock.rwe/015
+RWE016,Oncology nursing intensity and outcomes NSCLC,Health System,2024,,TA_ONCO_2L_NSCLC,GEO_US,Cohort,High-intensity nursing navigation associated with fewer ED visits.,https://mock.rwe/016
+RWE017,mCRC travel burden and discontinuation,Health System,2023,,TA_ONCO_MCRC,GEO_US,Survey-linked claims,Travel time quartile associated with early discontinuation.,https://mock.rwe/017
+RWE018,HF remote monitoring pilot outcomes,Health System,2024,,TA_CARDIO_HF,GEO_US,Pilot,Remote weight alerts correlated with fewer HF admissions.,https://mock.rwe/018
+RWE019,RA flare steroid bursts claims signal,Health System,2023,,TA_IMMUNO_RA,GEO_US,Claims,Burst steroids clustered around therapy switches.,https://mock.rwe/019
+RWE020,MS MRI utilization variation,Health System,2023,,TA_NEURO_MS,GEO_US,Claims,MRI frequency varies 3x across MS centers.,https://mock.rwe/020
+RWE021,PD-1 NSCLC Japan claims effectiveness,Payer Lab,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_JP,Cohort,Effectiveness estimates sensitive to immortal time correction.,https://mock.rwe/021
+RWE022,Anti-VEGF mCRC Japan sequencing,Payer Lab,2022,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_JP,Cohort,High crossover prior to third line limits causal inference.,https://mock.rwe/022
+RWE023,CardioRx Japan hospital claims,Payer Lab,2024,DRUG_CARD_Z,TA_CARDIO_HF,GEO_JP,Cohort,Readmission reduction signal directionally consistent with US.,https://mock.rwe/023
+RWE024,ImmunoBlock APAC infection sensitivity,Payer Lab,2023,DRUG_IMMU_W,TA_IMMUNO_RA,GEO_APAC,Cohort,TB screening documentation heterogeneity across markets.,https://mock.rwe/024
+RWE025,NeuroPlus disability trajectory EU,Payer Lab,2024,DRUG_NEURO_V,TA_NEURO_MS,GEO_EU5,Registry,Long-term EDSS slopes similar across comparable effectiveness cohorts.,https://mock.rwe/025

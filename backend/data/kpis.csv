@@ -1,0 +1,8 @@
+kpi_id,name,baseline,target,unit
+KPI_CYCLE,IEP cycle time,3–6 months,< 2 weeks,duration
+KPI_GAPS,Evidence gaps identified per IEP,5–8,15–20,count
+KPI_SLR,SLR delivery time,6–12 analyst weeks,< 4 hours machine + 5 days human,duration
+KPI_ALIGN,AI-human synthesis alignment,TBD,≥ 90%,percent
+KPI_MLR,MLR rejection rate reduction,TBD,≥ 30% reduction vs manual,percent
+KPI_FTE,FTE efficiency gain per therapy area,Baseline,2–3 FTE,count
+KPI_ROI,3-year platform ROI,TBD,225%,percent

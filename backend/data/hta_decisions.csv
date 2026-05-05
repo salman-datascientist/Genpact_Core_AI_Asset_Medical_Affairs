@@ -1,0 +1,16 @@
+hta_id,agency,title,year,drug_id,therapy_area_id,geography_id,decision_summary,url
+HTA001,NICE,Technology appraisal: advanced NSCLC second-line immunotherapy,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_EU5,Mixed recommendation contingent on commercial arrangement and uncertainty resolution on OS.,https://mock.hta/nice/001
+HTA002,IQWiG,Benefit assessment oncology immunotherapy,2022,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_EU5,Hint on additional benefit depends on chosen comparator population.,https://mock.hta/iqwig/002
+HTA003,HAS,SMR assessment metastatic CRC anti-angiogenic,2024,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_EU5,IMprovement modest vs standard of care; real-world effectiveness requested post-launch.,https://mock.hta/has/003
+HTA004,ICER,US value assessment NSCLC immunotherapy,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_US,Below threshold at placeholder price; sensitivity to OS extrapolation assumptions.,https://mock.hta/icer/004
+HTA005,NICE,mCRC anti-angiogenic third-line,2022,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_EU5,Recommended within managed access with registry-linked evidence commitments.,https://mock.hta/nice/005
+HTA006,PMDA,Consultation summary cardiac therapy RWE package,2023,DRUG_CARD_Z,TA_CARDIO_HF,GEO_JP,Requests additional domestic claims evidence on HF hospitalizations.,https://mock.hta/pmda/006
+HTA007,Australian PBAC,HF therapy listing review,2024,DRUG_CARD_Z,TA_CARDIO_HF,GEO_APAC,Deferred pending subgroup cost-effectiveness on elderly cohort.,https://mock.hta/pbac/007
+HTA008,NICE,RA biologic positioning,2023,DRUG_IMMU_W,TA_IMMUNO_RA,GEO_EU5,Conditional positioning vs entrenched TNFi based on indirect comparisons.,https://mock.hta/nice/008
+HTA009,CADTH,MS DMT pharmacoeconomic review,2024,DRUG_NEURO_V,TA_NEURO_MS,GEO_US,Notes uncertainty in long-term disability extrapolation from short-term trials.,https://mock.hta/cadth/009
+HTA010,SMC,Scotland NSCLC immunotherapy,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_EU5,Accepted with patient access scheme requiring ongoing OS updates.,https://mock.hta/smc/010
+HTA011,G-BA,Germany benefit rating oncology,2022,DRUG_ONCO_Y,TA_ONCO_MCRC,GEO_EU5,Additional evidence requested on comparative effectiveness vs bevacizumab sequences.,https://mock.hta/g-ba/011
+HTA012,NICE,HF therapy renewal,2024,DRUG_CARD_Z,TA_CARDIO_HF,GEO_EU5,Maintained recommendation with updated mortality meta-analysis acceptable.,https://mock.hta/nice/012
+HTA013,EMA CHMP,RWE expectations annex NSCLC,2023,,TA_ONCO_2L_NSCLC,GEO_EU5,Annex highlights external control arm feasibility using EU registries.,https://mock.hta/ema/013
+HTA014,MoH Korea,Oncology reimbursement dossier,2023,DRUG_ONCO_X,TA_ONCO_2L_NSCLC,GEO_APAC,Requested Korean subgroup effectiveness from regional chart review.,https://mock.hta/kr/014
+HTA015,NICE,Digital Therapeutics MS adjunct,2024,,TA_NEURO_MS,GEO_EU5,Non-binding guidance encouraging wearable-derived endpoints in complementary studies.,https://mock.hta/nice/015

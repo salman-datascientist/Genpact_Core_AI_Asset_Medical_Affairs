@@ -1,0 +1,6 @@
+drug_id,name,sponsor,therapy_area_id,lifecycle_stage
+DRUG_ONCO_X,Onco-PD1+,PharmaCo Alpha,TA_ONCO_2L_NSCLC,LS_INLINE
+DRUG_ONCO_Y,Onco-AntiVEGF,PharmaCo Alpha,TA_ONCO_MCRC,LS_LAUNCH
+DRUG_CARD_Z,CardioRx,PharmaCo Beta,TA_CARDIO_HF,LS_INLINE
+DRUG_IMMU_W,ImmunoBlock,PharmaCo Gamma,TA_IMMUNO_RA,LS_PRE
+DRUG_NEURO_V,NeuroPlus,PharmaCo Delta,TA_NEURO_MS,LS_LAUNCH

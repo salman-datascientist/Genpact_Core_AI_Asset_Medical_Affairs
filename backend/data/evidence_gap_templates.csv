@@ -1,0 +1,21 @@
+template_id,therapy_area_id,stakeholder,tpp_attribute,gap_topic
+EGT001,TA_ONCO_2L_NSCLC,regulator,Overall survival,OS benefit vs active comparator in second-line setting with contemporary biomarker stratification
+EGT002,TA_ONCO_2L_NSCLC,payer,Cost-effectiveness,Budget impact and ICER vs PD-(L)1 backbone with US/EU comparator arms
+EGT003,TA_ONCO_2L_NSCLC,HCP,Adverse events,Immune-related AE rates and steroid use in routine practice cohorts
+EGT004,TA_ONCO_2L_NSCLC,patient,Quality of life,PRO instruments and symptom burden outside trial populations
+EGT005,TA_ONCO_MCRC,regulator,PFS,PFS in refractory mCRC with biomarker-defined subgroups
+EGT006,TA_ONCO_MCRC,payer,Value story,Real-world treatment sequencing and discontinuation reasons affecting cost
+EGT007,TA_ONCO_MCRC,HCP,Combination use,Off-label combination patterns and outcomes in claims-linked data
+EGT008,TA_ONCO_MCRC,patient,Access,Geographic and payer-driven access variation in second-line therapy
+EGT009,TA_CARDIO_HF,regulator,Mortality,All-cause mortality and HF hospitalization in guideline-directed populations
+EGT010,TA_CARDIO_HF,payer,Readmissions,30-day readmission and economic outcomes by frailty proxies
+EGT011,TA_CARDIO_HF,HCP,Dosing titration,Titration adherence and outcome associations in EHR
+EGT012,TA_CARDIO_HF,patient,Symptom relief,Patient-reported dyspnea and functional status in RWD
+EGT013,TA_IMMUNO_RA,regulator,Safety,Serious infection rates with prior biologic exposure stratification
+EGT014,TA_IMMUNO_RA,payer,Switching,Switching patterns from TNFi to targeted therapy and budget impact
+EGT015,TA_IMMUNO_RA,HCP,Persistence,Treatment persistence and flare rates in registry-linked cohorts
+EGT016,TA_IMMUNO_RA,patient,Work productivity,Work productivity and activity impairment in employed cohorts
+EGT017,TA_NEURO_MS,regulator,Relapse rate,Annualized relapse rate vs platform therapy in real-world MS registry
+EGT018,TA_NEURO_MS,payer,Treatment pathways,Initiation and escalation patterns affecting total cost of care
+EGT019,TA_NEURO_MS,HCP,MRI activity,Radiographic outcomes linked to treatment switches in EHR
+EGT020,TA_NEURO_MS,patient,Disability progression,EDSS trajectory in diverse racial/ethnic cohorts

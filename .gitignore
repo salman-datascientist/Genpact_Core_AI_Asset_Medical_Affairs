@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.local
+
+# Build
+frontend/dist/
+*.egg-info/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime CSV mutations (optional — remove line to commit demo state)
+# backend/data/iep_requests.csv
+# backend/data/iep_sections.csv
+# backend/data/reviews.csv
+# backend/data/chat_messages.csv
