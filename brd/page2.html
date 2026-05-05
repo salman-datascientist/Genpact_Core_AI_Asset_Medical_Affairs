@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BRD Explained — Page 2 | Medical Affairs AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#F0F2F6;color:#1E293B;}
+.topnav{background:#1E3A5F;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{color:#fff;font-weight:700;font-size:16px;}
+.pagenav{display:flex;gap:6px;}
+.pagenav a{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;text-decoration:none;color:#93C5FD;border:1.5px solid rgba(255,255,255,0.15);}
+.pagenav a.active{background:#2563EB;color:#fff;border-color:#2563EB;}
+.pagenav a:hover{background:rgba(255,255,255,0.1);}
+.hero{background:linear-gradient(135deg,#1E3A5F 0%,#7C3AED 100%);padding:50px 40px 40px;color:#fff;}
+.hero-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);display:inline-block;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:16px;}
+.hero h1{font-size:30px;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.content{max-width:960px;margin:0 auto;padding:36px 24px;}
+.section{background:#fff;border-radius:14px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.07);margin-bottom:28px;}
+.section h2{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:8px;}
+.section h3{font-size:16px;font-weight:600;color:#1E3A5F;margin:20px 0 10px;}
+.section p{font-size:14px;color:#374151;line-height:1.7;margin-bottom:12px;}
+.section ul{padding-left:20px;margin-bottom:12px;}
+.section ul li{font-size:14px;color:#374151;line-height:1.8;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+thead tr{background:#1E3A5F;color:#fff;}
+thead th{padding:10px 14px;text-align:left;font-weight:600;}
+tbody tr:nth-child(even){background:#F8FAFC;}
+tbody td{padding:9px 14px;border-bottom:1px solid #F1F5F9;color:#374151;}
+tbody td b{color:#1E3A5F;}
+.td-bad{color:#DC2626;font-weight:600;}
+.td-good{color:#16A34A;font-weight:600;}
+.code-block{background:#0F172A;border-radius:10px;padding:18px 20px;font-family:'Courier New',monospace;font-size:12px;color:#94A3B8;overflow-x:auto;margin:14px 0;line-height:1.7;}
+.c-green{color:#4ADE80;}.c-blue{color:#60A5FA;}.c-yellow{color:#FCD34D;}.c-red{color:#F87171;}.c-purple{color:#C084FC;}
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;display:flex;gap:12px;align-items:flex-start;}
+.alert-warning{background:#FEF9C3;border-left:4px solid #CA8A04;color:#92400E;}
+.alert-note{background:#EFF6FF;border-left:4px solid #2563EB;color:#1D4ED8;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.request-quote{background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px 18px;font-size:13px;font-style:italic;color:#1D4ED8;margin:12px 0;}
+.pp-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.pp-num{width:42px;height:42px;background:#7C3AED;color:#fff;border-radius:10px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pp-title{font-size:21px;font-weight:700;color:#1E3A5F;}
+/* Scoring model visual */
+.score-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0;}
+.score-card{border-radius:10px;padding:16px;text-align:center;}
+.score-high{background:#DCFCE7;border:2px solid #16A34A;}
+.score-med{background:#FEF9C3;border:2px solid #CA8A04;}
+.score-low{background:#FEE2E2;border:2px solid #DC2626;}
+.score-val{font-size:32px;font-weight:700;margin-bottom:6px;}
+.score-name{font-size:13px;font-weight:600;color:#1E293B;}
+.score-detail{font-size:11px;color:#64748B;margin-top:4px;}
+.score-action{font-size:11px;font-weight:700;margin-top:8px;padding:4px 10px;border-radius:10px;display:inline-block;}
+.action-high{background:#1E3A5F;color:#fff;}
+.action-remove{background:#DC2626;color:#fff;}
+.action-med{background:#CA8A04;color:#fff;}
+/* SLR phases */
+.phase-row{display:flex;gap:16px;margin:14px 0;}
+.phase-card{flex:1;border-radius:10px;padding:16px;border:2px solid #E2E8F0;}
+.phase-num{font-size:10px;font-weight:700;letter-spacing:1px;color:#64748B;margin-bottom:6px;}
+.phase-title{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px;}
+.phase-detail{font-size:11px;color:#374151;line-height:1.6;}
+.phase-time{font-size:11px;font-weight:600;color:#DC2626;margin-top:8px;}
+.phase-1{background:#EFF6FF;border-color:#BFDBFE;}
+.phase-2{background:#EDE9FE;border-color:#C4B5FD;}
+.phase-3{background:#FEF9C3;border-color:#FDE68A;}
+.phase-4{background:#FEF2F2;border-color:#FECACA;}
+/* VS comparison */
+.vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin:14px 0;}
+.vs-card{border-radius:10px;padding:18px;}
+.vs-today{background:#FEF2F2;border:2px solid #FECACA;}
+.vs-ai{background:#F0FDF4;border:2px solid #BBF7D0;}
+.vs-label{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.vs-label-red{color:#DC2626;}.vs-label-green{color:#16A34A;}
+.vs-content{font-size:12px;color:#374151;line-height:1.7;}
+.vs-divider{text-align:center;font-size:22px;font-weight:700;color:#64748B;}
+.footnav{max-width:960px;margin:0 auto;padding:20px 24px 40px;display:flex;justify-content:space-between;}
+.btn-nav{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;}
+.btn-next{background:#2563EB;color:#fff;}
+.btn-prev{background:#fff;color:#1E3A5F;border:1.5px solid #E2E8F0;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">💊 Medical Affairs AI — BRD Explained</div>
+  <div class="pagenav">
+    <a href="page1.html">Page 1: Intro + Pain Points 1–2</a>
+    <a href="page2.html" class="active">Page 2: Pain Points 3–4</a>
+    <a href="page3.html">Page 3: Pain Point 5 + Summary</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">📄 PAGE 2 OF 3</div>
+  <h1>Pain Points 3 &amp; 4<br>Static HCP Targeting + SLR Bottleneck</h1>
+  <div style="font-size:14px;opacity:.85;margin-top:8px;">Drug example: Zejula (Niraparib) — Ovarian Cancer — GSK</div>
+</div>
+
+<div class="content">
+
+  <!-- Pain Point 3 -->
+  <div class="section">
+    <div class="pp-header">
+      <div class="pp-num">3</div>
+      <div class="pp-title">Static HCP Targeting — Not Dynamically Updated</div>
+    </div>
+
+    <h3>What is HCP Targeting?</h3>
+    <p><b>HCPs (Healthcare Professionals)</b> = Oncologists, GPs, Specialists who prescribe Zejula. <b>Medical Science Liaisons (MSLs)</b> — GSK's field team — visit these doctors to share clinical data, answer medical questions, and understand unmet patient needs. Before visiting, they need a <b>target list</b> of which doctors to prioritise.</p>
+
+    <h3>How the Static Target List is Built Today</h3>
+    <div class="code-block">
+<span class="c-blue">January 2024:</span>
+  Analyst pulls Optum claims data for Q3 2023
+  Identifies 500 oncologists who prescribed PARP inhibitors
+  Ranks them by prescription volume
+  Creates: <span class="c-yellow">hcp_target_list_2024.xlsx</span>
+
+<span class="c-red">This same list is used ALL YEAR by MSL teams — never updated.</span></div>
+
+    <h3>The "Static" Problem — Real Example (Aug 2024)</h3>
+    <table>
+      <thead><tr><th>Doctor</th><th>Jan List Status</th><th>Reality in Aug 2024</th><th>MSL Action</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td><b>Dr. Smith, Boston</b></td><td>✅ On list (top 10)</td><td>Retired in March 2024</td><td>Still visiting monthly</td><td class="td-bad">Wasted MSL time ❌</td></tr>
+        <tr><td><b>Dr. Patel, NYC</b></td><td>❌ Not on list</td><td>Joined major cancer center, sees 60 OC patients/month</td><td>Never visited</td><td class="td-bad">Missed opportunity ❌</td></tr>
+        <tr><td><b>Dr. Lee, LA</b></td><td>✅ On list</td><td>Switched focus to breast cancer, 0 OC patients now</td><td>Still visiting quarterly</td><td class="td-bad">Wasted MSL time ❌</td></tr>
+        <tr><td><b>Dr. Chen, Chicago</b></td><td>❌ Not on list</td><td>New fellowship, prescribing Olaparib (competitor) heavily</td><td>Never educated about Zejula</td><td class="td-bad">Competitor wins ❌</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-warning">
+      <div class="alert-icon">⚠️</div>
+      <div><b>WARNING:</b> By mid-year, 30–40% of static target lists are already outdated. MSLs waste thousands of field hours visiting the wrong doctors while high-potential new prescribers go uncontacted.</div>
+    </div>
+
+    <h3>What Dynamic AI Targeting Would Do</h3>
+    <div class="code-block">
+<span class="c-green">Every Month →</span> AI pulls latest claims data from Optum
+           → Identifies who is actively prescribing OC drugs <span class="c-yellow">RIGHT NOW</span>
+           → Scores each HCP: prescription volume + growth trend + geography
+           → Auto-updates priority list → MSLs get refreshed targets
+
+<span class="c-blue">Scoring Model:</span>
+Score = (0.40 × Rx_volume_30d) + (0.30 × MoM_growth_%) + (0.20 × geo_priority) + (0.10 × engagement_score)
+
+┌──────────────┬──────────────┬──────────────┬────────────┬──────────┐
+│ doctor_id    │ rx_last_30d  │ mom_growth_% │ territory  │ score    │
+├──────────────┼──────────────┼──────────────┼────────────┼──────────┤
+│ <span class="c-blue">DR-00045</span>     │ 12           │ <span class="c-green">+40%</span>         │ NYC-East   │ <span class="c-green">94</span>       │
+│ <span class="c-blue">DR-00078</span>     │ 8            │ <span class="c-green">+15%</span>         │ Boston     │ <span class="c-yellow">78</span>       │
+│ <span class="c-blue">DR-00012</span>     │ 2            │ <span class="c-red">-60%</span>         │ LA-West    │ <span class="c-red">18</span>       │
+└──────────────┴──────────────┴──────────────┴────────────┴──────────┘
+<span class="c-red">DR-00012 auto-removed.</span> <span class="c-green">DR-00045 flagged as high priority — MSL visits next week.</span></div>
+
+    <div class="score-grid">
+      <div class="score-card score-high">
+        <div class="score-val" style="color:#16A34A;">94</div>
+        <div class="score-name">Dr. Patel — NYC</div>
+        <div class="score-detail">12 Rx/month · +40% growth<br>Never visited · High potential</div>
+        <span class="score-action action-high">🔴 HIGH PRIORITY — Visit now</span>
+      </div>
+      <div class="score-card score-med">
+        <div class="score-val" style="color:#CA8A04;">78</div>
+        <div class="score-name">Dr. Chen — Chicago</div>
+        <div class="score-detail">8 Rx/month · +15% growth<br>Last visit: 3 months ago</div>
+        <span class="score-action action-med">🟡 MEDIUM — Schedule visit</span>
+      </div>
+      <div class="score-card score-low">
+        <div class="score-val" style="color:#DC2626;">18</div>
+        <div class="score-name">Dr. Smith — Boston</div>
+        <div class="score-detail">2 Rx/month · -60% decline<br>Retired → reassigned territory</div>
+        <span class="score-action action-remove">⚫ REMOVE — Auto-archived</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pain Point 4 -->
+  <div class="section">
+    <div class="pp-header">
+      <div class="pp-num" style="background:#CA8A04;">4</div>
+      <div class="pp-title">Evidence Synthesis Bottleneck — SLR Takes 6–12 Analyst Weeks</div>
+    </div>
+
+    <h3>What is a Systematic Literature Review (SLR)?</h3>
+    <p>Before submitting to regulators or payers, GSK must prove they reviewed <b>ALL available evidence</b> — not just cherry-picked studies. This is an SLR — a rigorous, structured review of every published paper on a topic.</p>
+
+    <h3>What a PubMed Search Returns</h3>
+    <div class="code-block">
+<span class="c-blue">Search Query:</span>
+  ("ovarian cancer" OR "ovarian neoplasm")
+  AND ("niraparib" OR "PARP inhibitor")
+  AND ("real world" OR "observational")
+  AND (2019:2024[dp])
+
+<span class="c-yellow">Results:</span>
+  PubMed:  <span class="c-green">2,847 papers</span>
+  Embase:  <span class="c-green">1,903 papers</span>
+  After deduplication: <span class="c-red">3,900 unique papers to screen</span></div>
+
+    <h3>The Manual SLR — Phase by Phase</h3>
+    <div class="phase-row">
+      <div class="phase-card phase-1">
+        <div class="phase-num">PHASE 1</div>
+        <div class="phase-title">Title/Abstract Screening</div>
+        <div class="phase-detail">3,900 abstracts · 2 analysts · each abstract ~2 min<br>3,900 × 2 min = 130 hours</div>
+        <div class="phase-time">⏱ 3.25 analyst-weeks</div>
+      </div>
+      <div class="phase-card phase-2">
+        <div class="phase-num">PHASE 2</div>
+        <div class="phase-title">Full Text Review</div>
+        <div class="phase-detail">400 papers pass Phase 1 · each paper ~45 min<br>400 × 45 min = 300 hours</div>
+        <div class="phase-time">⏱ 7.5 analyst-weeks</div>
+      </div>
+      <div class="phase-card phase-3">
+        <div class="phase-num">PHASE 3</div>
+        <div class="phase-title">Data Extraction Table</div>
+        <div class="phase-detail">Fill extraction form for each of 400 papers<br>Author, year, n, outcomes, bias risk</div>
+        <div class="phase-time">⏱ 2 analyst-weeks</div>
+      </div>
+      <div class="phase-card phase-4">
+        <div class="phase-num">PHASE 4</div>
+        <div class="phase-title">Synthesis &amp; Report Writing</div>
+        <div class="phase-detail">Narrative synthesis of all included papers<br>Evidence tables, forest plots</div>
+        <div class="phase-time">⏱ 2 analyst-weeks</div>
+      </div>
+    </div>
+
+    <h3>What the Data Extraction Table Looks Like (Manual)</h3>
+    <table>
+      <thead><tr><th>Paper ID</th><th>Author</th><th>Year</th><th>Study Design</th><th>N Patients</th><th>Drug</th><th>Outcome (PFS months)</th><th>Comparator</th><th>Bias Risk</th></tr></thead>
+      <tbody>
+        <tr><td><b>PMC-001</b></td><td>Kim et al.</td><td>2023</td><td>Retrospective cohort</td><td>342</td><td>Niraparib</td><td class="td-good">8.3</td><td>Olaparib (6.1)</td><td style="color:#16A34A;">Low</td></tr>
+        <tr><td><b>PMC-002</b></td><td>Jones et al.</td><td>2022</td><td>Registry study</td><td>1,205</td><td>Niraparib</td><td class="td-good">9.1</td><td>Placebo (4.2)</td><td style="color:#CA8A04;">Medium</td></tr>
+        <tr><td><b>PMC-003</b></td><td>Patel et al.</td><td>2023</td><td>Chart review</td><td>89</td><td>Niraparib</td><td class="td-good">7.8</td><td>No comparator</td><td style="color:#DC2626;">High</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Manual vs AI RAG Pipeline Comparison</h3>
+    <div class="vs-grid">
+      <div class="vs-card vs-today">
+        <div class="vs-label vs-label-red">⏰ TODAY — MANUAL SLR</div>
+        <div class="vs-content">
+          ❌ 2 analysts screen 3,900 abstracts by hand<br>
+          ❌ 400 papers read fully — 45 min each<br>
+          ❌ Data extraction filled manually into Excel<br>
+          ❌ Narrative synthesis written from scratch<br><br>
+          <b style="color:#DC2626;">Total: 12–14 analyst weeks = ~$70,000</b>
+        </div>
+      </div>
+      <div class="vs-divider">VS</div>
+      <div class="vs-card vs-ai">
+        <div class="vs-label vs-label-green">⚡ AI RAG PIPELINE</div>
+        <div class="vs-content">
+          ✅ 3,900 abstracts embedded into Weaviate in 1 hour<br>
+          ✅ AI screens all papers against criteria in 2 hours<br>
+          ✅ AI extracts data fields from 400 full texts in 2 hours<br>
+          ✅ AI generates synthesis narrative with citations<br><br>
+          <b style="color:#16A34A;">Total: 4–6 hours. Human reviews AI output.</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-note">
+      <div class="alert-icon">ℹ️</div>
+      <div><b>KEY RULE (BR-NFR-04):</b> All AI claims must cite a retrieved paper chunk. Confidence score &lt; 0.7 is automatically flagged for human expert review. No free generation of clinical data.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footnav">
+  <a href="page1.html" class="btn-nav btn-prev">← Page 1: Pain Points 1 &amp; 2</a>
+  <a href="page3.html" class="btn-nav btn-next">Page 3: Pain Point 5 + Summary →</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BRD Explained — Page 3 | Medical Affairs AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#F0F2F6;color:#1E293B;}
+.topnav{background:#1E3A5F;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{color:#fff;font-weight:700;font-size:16px;}
+.pagenav{display:flex;gap:6px;}
+.pagenav a{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;text-decoration:none;color:#93C5FD;border:1.5px solid rgba(255,255,255,0.15);}
+.pagenav a.active{background:#2563EB;color:#fff;border-color:#2563EB;}
+.pagenav a:hover{background:rgba(255,255,255,0.1);}
+.hero{background:linear-gradient(135deg,#1E3A5F 0%,#16A34A 100%);padding:50px 40px 40px;color:#fff;}
+.hero-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);display:inline-block;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;margin-bottom:16px;}
+.hero h1{font-size:30px;font-weight:700;line-height:1.3;margin-bottom:8px;}
+.content{max-width:960px;margin:0 auto;padding:36px 24px;}
+.section{background:#fff;border-radius:14px;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.07);margin-bottom:28px;}
+.section h2{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:8px;}
+.section h3{font-size:16px;font-weight:600;color:#1E3A5F;margin:20px 0 10px;}
+.section p{font-size:14px;color:#374151;line-height:1.7;margin-bottom:12px;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+thead tr{background:#1E3A5F;color:#fff;}
+thead th{padding:10px 14px;text-align:left;font-weight:600;}
+tbody tr:nth-child(even){background:#F8FAFC;}
+tbody td{padding:9px 14px;border-bottom:1px solid #F1F5F9;color:#374151;}
+tbody td b{color:#1E3A5F;}
+.code-block{background:#0F172A;border-radius:10px;padding:18px 20px;font-family:'Courier New',monospace;font-size:12px;color:#94A3B8;overflow-x:auto;margin:14px 0;line-height:1.7;}
+.c-green{color:#4ADE80;}.c-blue{color:#60A5FA;}.c-yellow{color:#FCD34D;}.c-red{color:#F87171;}
+.alert{border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;display:flex;gap:12px;align-items:flex-start;}
+.alert-important{background:#FEF9C3;border-left:4px solid #CA8A04;color:#92400E;}
+.alert-tip{background:#F0FDF4;border-left:4px solid #16A34A;color:#166534;}
+.alert-icon{font-size:18px;flex-shrink:0;}
+.pp-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.pp-num{width:42px;height:42px;background:#DC2626;color:#fff;border-radius:10px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pp-title{font-size:21px;font-weight:700;color:#1E3A5F;}
+/* Code mismatch visual */
+.code-mismatch{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0;}
+.code-card{border-radius:8px;padding:12px;text-align:center;border:2px solid #E2E8F0;}
+.code-card-db{font-size:10px;font-weight:700;color:#64748B;margin-bottom:4px;}
+.code-card-sys{font-size:10px;color:#374151;margin-bottom:6px;}
+.code-card-val{font-size:14px;font-weight:700;color:#2563EB;font-family:'Courier New',monospace;background:#EFF6FF;padding:4px 8px;border-radius:6px;}
+/* Summary table */
+.summary-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+.summary-table th{background:#1E3A5F;color:#fff;padding:10px 14px;text-align:left;}
+.summary-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:top;}
+.summary-table tr:nth-child(even) td{background:#F8FAFC;}
+.td-old{color:#DC2626;font-size:12px;}
+.td-new{color:#16A34A;font-size:12px;}
+/* Architecture mapping */
+.arch-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:10px 0;}
+.arch-pain{background:#FEF2F2;border:1.5px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:12px;color:#991B1B;}
+.arch-arrow{text-align:center;font-size:18px;color:#64748B;}
+.arch-sol{background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:8px;padding:10px 14px;font-size:12px;color:#166534;}
+/* Footer */
+.footnav{max-width:960px;margin:0 auto;padding:20px 24px 40px;display:flex;justify-content:space-between;}
+.btn-nav{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;}
+.btn-next{background:#16A34A;color:#fff;}
+.btn-prev{background:#fff;color:#1E3A5F;border:1.5px solid #E2E8F0;}
+/* Access timeline */
+.access-row{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.access-db{font-size:12px;font-weight:700;color:#1E3A5F;width:120px;flex-shrink:0;}
+.access-bar-wrap{flex:1;position:relative;}
+.access-bar{height:28px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:11px;color:#fff;font-weight:600;}
+.access-bar-instant{background:#16A34A;width:8%;}
+.access-bar-2w{background:#CA8A04;width:22%;}
+.access-bar-6w{background:#DC2626;width:55%;}
+.access-bar-4w{background:#DC2626;width:38%;}
+/* Stats highlight */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0;}
+.stat-card{border-radius:12px;padding:20px;text-align:center;}
+.stat-before{background:#FEF2F2;border:2px solid #FECACA;}
+.stat-after{background:#F0FDF4;border:2px solid #BBF7D0;}
+.stat-neutral{background:#EFF6FF;border:2px solid #BFDBFE;}
+.stat-val{font-size:28px;font-weight:700;margin-bottom:6px;}
+.stat-lbl{font-size:12px;color:#64748B;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="logo">💊 Medical Affairs AI — BRD Explained</div>
+  <div class="pagenav">
+    <a href="page1.html">Page 1: Intro + Pain Points 1–2</a>
+    <a href="page2.html">Page 2: Pain Points 3–4</a>
+    <a href="page3.html" class="active">Page 3: Pain Point 5 + Summary</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">📄 PAGE 3 OF 3 — FINAL</div>
+  <h1>Pain Point 5: Data Fragmentation<br>+ Full Summary + Architecture Decisions</h1>
+  <div style="font-size:14px;opacity:.85;margin-top:8px;">Drug example: Zejula (Niraparib) — Ovarian Cancer — GSK</div>
+</div>
+
+<div class="content">
+
+  <!-- Pain Point 5 -->
+  <div class="section">
+    <div class="pp-header">
+      <div class="pp-num">5</div>
+      <div class="pp-title">Data Fragmentation Across IQVIA, CPRD, Optum, Registries</div>
+    </div>
+
+    <h3>The Database Landscape — Who Has What Data?</h3>
+    <table>
+      <thead><tr><th>Database</th><th>Owner</th><th>Geography</th><th>Patients Covered</th><th>Access Cost</th><th>Data Format</th></tr></thead>
+      <tbody>
+        <tr><td><b>IQVIA Dx</b></td><td>IQVIA (private)</td><td>US, EU, APAC</td><td>300M+ patients</td><td>$2–5M/year</td><td>SAS, CSV</td></tr>
+        <tr><td><b>Optum Clinformatics</b></td><td>UnitedHealth Group</td><td>USA only</td><td>200M+ patients</td><td>$1–3M/year</td><td>SQL tables</td></tr>
+        <tr><td><b>CPRD Aurum</b></td><td>UK Gov (MHRA)</td><td>UK only</td><td>13M patients</td><td>Ethics approval + fee</td><td>Stata, SAS</td></tr>
+        <tr><td><b>SEER Registry</b></td><td>US Govt (NCI)</td><td>USA only</td><td>All US cancer patients</td><td>Free (application)</td><td>CSV, SAS</td></tr>
+        <tr><td><b>Flatiron Health</b></td><td>Roche subsidiary</td><td>USA</td><td>4M+ cancer patients</td><td>Partnership required</td><td>HL7 FHIR</td></tr>
+      </tbody>
+    </table>
+
+    <h3>The Code System Mismatch Problem</h3>
+    <p>The same Ovarian Cancer diagnosis is coded <b>differently</b> in every database. An analyst must manually map between all of them:</p>
+
+    <div class="code-mismatch">
+      <div class="code-card" style="background:#EFF6FF;border-color:#BFDBFE;">
+        <div class="code-card-db">OPTUM (US)</div>
+        <div class="code-card-sys">ICD-10-CM</div>
+        <div class="code-card-val">C56.9</div>
+      </div>
+      <div class="code-card" style="background:#F0FDF4;border-color:#BBF7D0;">
+        <div class="code-card-db">CPRD (UK)</div>
+        <div class="code-card-sys">Read Codes v2</div>
+        <div class="code-card-val">B440.00</div>
+      </div>
+      <div class="code-card" style="background:#FEF9C3;border-color:#FDE68A;">
+        <div class="code-card-db">SEER</div>
+        <div class="code-card-sys">ICD-O-3</div>
+        <div class="code-card-val">C569</div>
+      </div>
+      <div class="code-card" style="background:#EDE9FE;border-color:#C4B5FD;">
+        <div class="code-card-db">FLATIRON</div>
+        <div class="code-card-sys">SNOMED CT</div>
+        <div class="code-card-val">363443007</div>
+      </div>
+      <div class="code-card" style="background:#FEF2F2;border-color:#FECACA;">
+        <div class="code-card-db">PUBMED</div>
+        <div class="code-card-sys">MeSH Terms</div>
+        <div class="code-card-val">D010051</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748B;text-align:center;">↑ All 5 codes mean the exact same disease — Ovarian Cancer — but no two systems share the same standard.</p>
+
+    <div class="alert alert-important">
+      <div class="alert-icon">⚠️</div>
+      <div><b>IMPORTANT:</b> These 5 codes all mean the exact same disease — but no two systems use the same coding standard. An analyst must manually build mapping tables before any cross-database analysis can begin.</div>
+    </div>
+
+    <h3>Real-World Cross-Country Analysis Problem</h3>
+    <p>Request: <i>"Compare Zejula patient outcomes in the US vs UK"</i></p>
+    <div class="code-block">
+<span class="c-blue">US DATA (Optum):</span>
+┌────────────┬────────────┬──────────────┬────────────┬───────────────┐
+│ patient_id │ diag_code  │ drug_ndc     │ cost_usd   │ date (MM/DD)  │
+├────────────┼────────────┼──────────────┼────────────┼───────────────┤
+│ PT-001     │ <span class="c-green">C56.9</span>      │ <span class="c-yellow">54868-6106</span>   │ <span class="c-green">18,450</span>     │ <span class="c-yellow">03/15/2023</span>    │
+└────────────┴────────────┴──────────────┴────────────┴───────────────┘
+
+<span class="c-blue">UK DATA (CPRD):</span>
+┌────────────┬────────────┬──────────────┬────────────┬───────────────┐
+│ patid      │ read_code  │ prodcode     │ cost_gbp   │ date (DD/MM)  │
+├────────────┼────────────┼──────────────┼────────────┼───────────────┤
+│ 9980012    │ <span class="c-red">B440.00</span>    │ <span class="c-red">3521411000</span>   │ <span class="c-red">7,200</span>      │ <span class="c-red">15/03/2023</span>    │
+└────────────┴────────────┴──────────────┴────────────┴───────────────┘
+
+<span class="c-red">PROBLEMS the analyst must manually fix BEFORE combining datasets:</span>
+  1. Different column names    (patient_id  vs  patid)
+  2. Different drug codes      (NDC         vs  CPRD prodcode)
+  3. Different diagnosis codes (ICD-10-CM   vs  Read Codes)
+  4. Different currencies      (USD         vs  GBP)
+  5. Different date formats    (MM/DD/YYYY  vs  DD/MM/YYYY)
+  6. Different access methods  (SQL query   vs  file download)
+
+<span class="c-red">Manual harmonisation time: 2–3 weeks BEFORE any analysis can begin ⏱️</span></div>
+
+    <h3>The Access Wait Time Problem</h3>
+    <div style="background:#0F172A;border-radius:10px;padding:20px 24px;margin:14px 0;">
+      <div class="access-row">
+        <div class="access-db" style="color:#4ADE80;">IQVIA</div>
+        <div class="access-bar-wrap">
+          <div class="access-bar access-bar-instant">Query today ✅</div>
+        </div>
+        <div style="color:#4ADE80;font-size:12px;margin-left:8px;">Same day</div>
+      </div>
+      <div class="access-row">
+        <div class="access-db" style="color:#FCD34D;">Optum</div>
+        <div class="access-bar-wrap">
+          <div class="access-bar access-bar-2w">Submit request → wait</div>
+        </div>
+        <div style="color:#FCD34D;font-size:12px;margin-left:8px;">2 weeks</div>
+      </div>
+      <div class="access-row">
+        <div class="access-db" style="color:#F87171;">CPRD</div>
+        <div class="access-bar-wrap">
+          <div class="access-bar access-bar-6w">Ethics application → committee review → approval → access</div>
+        </div>
+        <div style="color:#F87171;font-size:12px;margin-left:8px;">4–8 weeks</div>
+      </div>
+      <div class="access-row">
+        <div class="access-db" style="color:#F87171;">SEER</div>
+        <div class="access-bar-wrap">
+          <div class="access-bar access-bar-4w">Research application → review → file download</div>
+        </div>
+        <div style="color:#F87171;font-size:12px;margin-left:8px;">2–4 weeks</div>
+      </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid #334155;color:#F87171;font-size:12px;font-weight:600;font-family:'Courier New',monospace;">
+        To get data from ALL FOUR for one study: Best case = 8 weeks just waiting for access ⏱️
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Table -->
+  <div class="section">
+    <h2>🏗️ What the AI System Will Fix — Full Summary</h2>
+    <div class="stat-row">
+      <div class="stat-card stat-before"><div class="stat-val" style="color:#DC2626;">3–6</div><div class="stat-lbl">months per IEP today</div></div>
+      <div class="stat-card stat-after"><div class="stat-val" style="color:#16A34A;">10</div><div class="stat-lbl">minutes for AI draft</div></div>
+      <div class="stat-card stat-neutral"><div class="stat-val" style="color:#2563EB;">$70K</div><div class="stat-lbl">saved per SLR cycle</div></div>
+    </div>
+    <table class="summary-table">
+      <thead><tr><th>Pain Point</th><th>Today (Manual)</th><th>AI System (To-Be)</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Data stitching</b></td>
+          <td class="td-old">Analyst logs into 5 portals, exports files, copy-pastes into Word/Excel</td>
+          <td class="td-new">Single federated query layer connects all DBs via APIs simultaneously</td>
+        </tr>
+        <tr>
+          <td><b>Code mapping</b></td>
+          <td class="td-old">Manual ICD ↔ Read ↔ SNOMED mapping — hours of analyst time per study</td>
+          <td class="td-new">Automated ontology mapping layer — instant, 100% consistent</td>
+        </tr>
+        <tr>
+          <td><b>Evidence cycle (IEP)</b></td>
+          <td class="td-old">3–6 months per IEP package. 450+ IEPs/year = impossible</td>
+          <td class="td-new">10 minutes for AI draft, &lt;1 hour with HITL review</td>
+        </tr>
+        <tr>
+          <td><b>HCP targeting</b></td>
+          <td class="td-old">Static yearly list. 30–40% outdated by mid-year</td>
+          <td class="td-new">Dynamic monthly refresh from live Optum claims — AI scoring model</td>
+        </tr>
+        <tr>
+          <td><b>SLR (Literature Review)</b></td>
+          <td class="td-old">12 analyst-weeks, ~$70,000 per review</td>
+          <td class="td-new">4–6 hours via AI RAG pipeline. Human reviews flagged sections only</td>
+        </tr>
+        <tr>
+          <td><b>Data fragmentation</b></td>
+          <td class="td-old">Siloed, incompatible systems. Different codes, formats, currencies</td>
+          <td class="td-new">Federated query architecture — unified harmonised data layer</td>
+        </tr>
+        <tr>
+          <td><b>Access wait times</b></td>
+          <td class="td-old">Up to 8 weeks just to get access to all 4 required databases</td>
+          <td class="td-new">Pre-negotiated API connections — query in real-time</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert alert-tip">
+      <div class="alert-icon">💡</div>
+      <div><b>TIP:</b> The AI system doesn't replace the Medical Director or regulatory expert. It removes all the <b>manual data grunt work</b> so experts spend their time on decisions, interpretation, and oversight — not data collection.</div>
+    </div>
+  </div>
+
+  <!-- Architecture Decisions -->
+  <div class="section">
+    <h2>🔑 Architecture Decisions — Pain Point → Solution Mapping</h2>
+    <div class="arch-grid">
+      <div class="arch-pain">Data fragmentation across 5 siloed systems</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">Federated Query Layer (no raw data copy, Azure API Gateway)</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">Code system mismatch (ICD vs SNOMED vs Read Codes)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">Ontology Mapping Service — automated ICD↔SNOMED↔Read translation</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">SLR takes 12 analyst-weeks manually</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">RAG Pipeline (PubMed + Embase ingestion → Weaviate vector DB)</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">Static HCP targeting — 30–40% outdated by mid-year</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">Monthly Optum claims refresh + AI HCP scoring model</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">Regulatory compliance — all claims must be traceable</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">HITL review gate + full audit trail (Azure Blob) + e-signature</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">GDPR/HIPAA — no raw PII can go to LLM</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">k-anonymity + differential privacy + federated aggregation only</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">LLM hallucination risk in clinical claims</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">Grounded RAG only — no free generation. Citation confidence surfaced</div>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-pain">Multi-country deployment (US, UK, EU, APAC)</div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-sol">Azure multi-region + LangGraph orchestration + LLM-agnostic design</div>
+    </div>
+
+    <div style="margin-top:24px;background:#1E3A5F;border-radius:12px;padding:22px 24px;color:#fff;">
+      <div style="font-size:13px;font-weight:700;color:#93C5FD;margin-bottom:10px;">🏗️ TECH STACK SUMMARY</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;line-height:1.8;color:#CBD5E1;">
+        <div>🤖 <b style="color:#fff;">Orchestration:</b> LangGraph (multi-agent StateGraph)</div>
+        <div>🔍 <b style="color:#fff;">Vector DB:</b> Weaviate (Azure) — HNSW + BM25 hybrid</div>
+        <div>💬 <b style="color:#fff;">LLM (primary):</b> Azure OpenAI GPT-4o</div>
+        <div>💬 <b style="color:#fff;">LLM (fallback):</b> Gemini 2.0 / GPT-4o mini</div>
+        <div>☁️ <b style="color:#fff;">Cloud:</b> Microsoft Azure (multi-region)</div>
+        <div>🔒 <b style="color:#fff;">Compliance:</b> HIPAA, GDPR, FDA RWE, ICH E9(R1)</div>
+        <div>📋 <b style="color:#fff;">MLR Handoff:</b> Veeva Vault Promo Mats / Mecoms</div>
+        <div>🎯 <b style="color:#fff;">Demo UI:</b> Streamlit + FastAPI backend</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:20px;font-size:12px;color:#94A3B8;">
+    Document generated by Antigravity AI · Medical Affairs BRD Analysis · April 2026
+  </div>
+</div>
+
+<div class="footnav">
+  <a href="page2.html" class="btn-nav btn-prev">← Page 2: Pain Points 3 &amp; 4</a>
+  <a href="page1.html" class="btn-nav btn-next" style="background:#1E3A5F;">↩ Back to Page 1</a>
+</div>
+
+</body>
+</html>
