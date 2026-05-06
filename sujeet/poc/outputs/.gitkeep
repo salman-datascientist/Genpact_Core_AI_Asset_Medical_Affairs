@@ -1,0 +1,3 @@
+# This file keeps the outputs/ directory tracked in git.
+# Evidence report JSON files are ignored via .gitignore (outputs/*)
+# The directory will be auto-created when the API server first runs.

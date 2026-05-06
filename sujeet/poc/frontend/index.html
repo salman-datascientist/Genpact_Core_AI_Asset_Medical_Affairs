@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedAffairs AI — POC Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">&#128138; MedAffairs AI <span class="logo-badge">POC</span></div>
+  <div class="nav-section">MAIN</div>
+  <div class="nav-item active" onclick="showScreen('screen-request')" id="nav-request">
+    <span>&#128203;</span> New Request
+  </div>
+  <div class="nav-item" onclick="showScreen('screen-progress')" id="nav-progress">
+    <span>&#9889;</span> Agent Progress
+  </div>
+  <div class="nav-item" onclick="showScreen('screen-evidence')" id="nav-evidence">
+    <span>&#128202;</span> Evidence Table
+  </div>
+  <div class="nav-item" onclick="showScreen('screen-gaps')" id="nav-gaps">
+    <span>&#128269;</span> Gap Analysis
+  </div>
+  <div class="nav-item" onclick="showScreen('screen-kols')" id="nav-kols">
+    <span>&#128104;&#8205;&#9877;&#65039;</span> KOL Targets
+  </div>
+  <div class="nav-section">DATA</div>
+  <div class="nav-item" onclick="showScreen('screen-papers')" id="nav-papers">
+    <span>&#128218;</span> Literature DB
+  </div>
+  <div class="sidebar-footer">
+    <div class="api-status" id="api-status">&#9679; Connecting...</div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- SCREEN 1: REQUEST -->
+  <div id="screen-request" class="screen active">
+    <div class="topbar">
+      <div>
+        <div class="page-title">New Evidence Request</div>
+        <div class="page-sub">AI-powered Integrated Evidence Plan (IEP) from live PubMed data</div>
+      </div>
+      <span class="badge">BR-IEP-01</span>
+    </div>
+
+    <div class="info-box">
+      <span>&#8505;&#65039;</span>
+      Fill in the details below. The AI agent will search PubMed, screen papers via PICO criteria, extract evidence, identify gaps, and score KOLs — all automatically.
+      <b>Estimated time: 30–60 seconds.</b>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127919; Request Type</div>
+      <div class="req-grid">
+        <div class="req-card selected" onclick="selectReqType(this,'Integrated Evidence Plan')">
+          <div class="req-icon">&#128196;</div>
+          <div class="req-name">Integrated Evidence Plan</div>
+          <div class="req-sub">Full IEP in MAPS format</div>
+        </div>
+        <div class="req-card" onclick="selectReqType(this,'Systematic Literature Review')">
+          <div class="req-icon">&#128218;</div>
+          <div class="req-name">Systematic Literature Review</div>
+          <div class="req-sub">SLR via RAG pipeline</div>
+        </div>
+        <div class="req-card" onclick="selectReqType(this,'Evidence Gap Analysis')">
+          <div class="req-icon">&#128269;</div>
+          <div class="req-name">Evidence Gap Analysis</div>
+          <div class="req-sub">Gap matrix per stakeholder</div>
+        </div>
+        <div class="req-card" onclick="selectReqType(this,'HCP Target Refresh')">
+          <div class="req-icon">&#128104;&#8205;&#9877;&#65039;</div>
+          <div class="req-name">HCP Target Refresh</div>
+          <div class="req-sub">Dynamic priority scoring</div>
+        </div>
+      </div>
+      <input type="hidden" id="req-type" value="Integrated Evidence Plan">
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128138; Drug &amp; Therapy Details</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Drug / Product *</label>
+          <select class="form-select" id="f-drug">
+            <option value="Niraparib">Zejula (Niraparib)</option>
+            <option value="Olaparib">Olaparib (Lynparza)</option>
+            <option value="Rucaparib">Rucaparib (Rubraca)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Indication *</label>
+          <select class="form-select" id="f-indication">
+            <option value="Ovarian Cancer">Platinum-resistant Ovarian Cancer</option>
+            <option value="Ovarian Cancer BRCA">BRCA-mutated Ovarian Cancer</option>
+            <option value="Breast Cancer">Breast Cancer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Primary Stakeholder *</label>
+          <select class="form-select" id="f-stakeholder">
+            <option>Payer (Aetna)</option>
+            <option>Regulator (FDA)</option>
+            <option>HCP (Oncologist)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Comparator Drug <span style="font-weight:400;color:#888">(optional)</span></label>
+          <select class="form-select" id="f-comparator">
+            <option value="">— None (no comparator) —</option>
+            <option>Olaparib</option>
+            <option>Rucaparib</option>
+            <option>Bevacizumab</option>
+            <option>Best Supportive Care</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127757; Geography &amp; Date Range</div>
+      <div class="geo-tags" id="geo-tags">
+        <span class="geo-tag selected" onclick="toggleGeo(this)">&#127482;&#127480; United States</span>
+        <span class="geo-tag" onclick="toggleGeo(this)">&#127468;&#127463; United Kingdom</span>
+        <span class="geo-tag" onclick="toggleGeo(this)">&#127465;&#127466; Germany</span>
+        <span class="geo-tag" onclick="toggleGeo(this)">&#127467;&#127479; France</span>
+        <span class="geo-tag" onclick="toggleGeo(this)">&#127471;&#127477; Japan</span>
+        <span class="geo-tag" onclick="toggleGeo(this)">&#127758; Global</span>
+      </div>
+      <div class="form-grid" style="margin-top:16px">
+        <div class="form-group">
+          <label class="form-label">Evidence From (Year)</label>
+          <input class="form-input" id="f-year-from" value="2019">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Evidence To (Year)</label>
+          <input class="form-input" id="f-year-to" value="2024">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label class="form-label">Special Instructions (optional)</label>
+        <input class="form-input" id="f-notes" placeholder="e.g. Focus on platinum-resistant patients aged 55+">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary">&#128190; Save Draft</button>
+      <button class="btn-primary" id="btn-run" onclick="runAgent()">
+        &#9889; Generate Evidence Package &#8594;
+      </button>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <div class="card-title">&#128336; Recent Requests</div>
+      <div class="recent-grid">
+        <div class="recent-card" onclick="loadDemo()">
+          <div class="recent-drug">Zejula — Ovarian Cancer</div>
+          <div class="recent-meta">US &middot; Payer (Aetna) &middot; May 4, 2026</div>
+          <span class="status-done">&#10003; Complete</span>
+        </div>
+        <div class="recent-card">
+          <div class="recent-drug">Olaparib — Breast Cancer</div>
+          <div class="recent-meta">UK &middot; Regulator (NICE) &middot; Apr 22, 2026</div>
+          <span class="status-review">&#8987; HITL Review</span>
+        </div>
+        <div class="recent-card">
+          <div class="recent-drug">HCP List Refresh — US</div>
+          <div class="recent-meta">US &middot; All territories &middot; Apr 18, 2026</div>
+          <span class="status-done">&#10003; Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: PROGRESS -->
+  <div id="screen-progress" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="prog-title">&#9889; Agent Progress</div>
+        <div class="page-sub" id="prog-sub">Waiting for agent to start...</div>
+      </div>
+      <span class="badge" id="prog-badge">IDLE</span>
+    </div>
+
+    <div class="summary-chips" id="prog-chips" style="display:none">
+      <div class="chip"><div class="chip-lbl">DRUG</div><div class="chip-val" id="chip-drug">—</div></div>
+      <div class="chip"><div class="chip-lbl">INDICATION</div><div class="chip-val" id="chip-ind">—</div></div>
+      <div class="chip"><div class="chip-lbl">STAKEHOLDER</div><div class="chip-val" id="chip-stake">—</div></div>
+      <div class="chip"><div class="chip-lbl">ELAPSED</div><div class="chip-val" id="chip-elapsed">—</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128202; Overall Progress</div>
+      <div class="prog-labels">
+        <span id="prog-pct-label">0% — Idle</span>
+        <span id="prog-eta">—</span>
+      </div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#129302; Agent Pipeline Steps</div>
+      <div id="steps-container">
+        <div class="step-row pending">
+          <div class="step-icon">&#128269;</div>
+          <div class="step-body">
+            <div class="step-name">Waiting for task...</div>
+            <div class="step-detail">Submit a request from Screen 1 to begin</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128223; Live Agent Log</div>
+      <div class="log-panel" id="log-panel">
+        <div class="log-line"><span class="log-time">[--:--:--]</span> <span class="log-info">INFO</span> System ready. Awaiting task submission.</div>
+      </div>
+    </div>
+
+    <div class="token-grid" id="token-grid">
+      <div class="token-box"><div class="token-val" id="t-papers">0</div><div class="token-lbl">Papers Retrieved</div></div>
+      <div class="token-box"><div class="token-val" id="t-included">0</div><div class="token-lbl">Papers Included</div></div>
+      <div class="token-box"><div class="token-val" id="t-evidence">0</div><div class="token-lbl">Evidence Rows</div></div>
+      <div class="token-box"><div class="token-val" id="t-gaps">0</div><div class="token-lbl">Gaps Found</div></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: EVIDENCE TABLE -->
+  <div id="screen-evidence" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="page-title">&#128202; Evidence Extraction Table</div>
+        <div class="page-sub">Structured data extracted from included papers by AI agent</div>
+      </div>
+      <button class="btn-secondary" onclick="exportCSV()">&#128229; Export CSV</button>
+    </div>
+    <div class="stats-row" id="ev-stats">
+      <div class="stat-box"><div class="stat-val blue" id="ev-total">0</div><div class="stat-lbl">Papers Screened</div></div>
+      <div class="stat-box"><div class="stat-val green" id="ev-included">0</div><div class="stat-lbl">Included</div></div>
+      <div class="stat-box"><div class="stat-val red" id="ev-excluded">0</div><div class="stat-lbl">Excluded</div></div>
+      <div class="stat-box"><div class="stat-val amber" id="ev-uncertain">0</div><div class="stat-lbl">Uncertain</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128203; Extracted Evidence (AI-Generated)</div>
+      <div class="table-wrap">
+        <table class="data-table" id="evidence-table">
+          <thead><tr>
+            <th>Year</th><th>Title</th><th>Authors</th><th>Journal</th>
+            <th>N Patients</th><th>Drug</th><th>Comparator</th>
+            <th>PFS (mo)</th><th>OS (mo)</th><th>Design</th><th>Country</th>
+          </tr></thead>
+          <tbody id="evidence-tbody">
+            <tr><td colspan="11" class="empty-msg">Run the agent to see results</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: GAP ANALYSIS -->
+  <div id="screen-gaps" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="page-title">&#128269; Evidence Gap Analysis</div>
+        <div class="page-sub">What evidence exists vs what payers and regulators require</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val red" id="gap-critical">0</div><div class="stat-lbl">&#128308; Critical Gaps</div></div>
+      <div class="stat-box"><div class="stat-val green" id="gap-covered">0</div><div class="stat-lbl">&#128994; Covered</div></div>
+      <div class="stat-box"><div class="stat-val blue" id="gap-total">0</div><div class="stat-lbl">Total Assessed</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128507; Gap Matrix</div>
+      <div class="table-wrap">
+        <table class="data-table" id="gap-table">
+          <thead><tr>
+            <th>Evidence Domain</th><th>Status</th><th>Recommendation</th>
+          </tr></thead>
+          <tbody id="gap-tbody">
+            <tr><td colspan="3" class="empty-msg">Run the agent to see gap analysis</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: KOLs -->
+  <div id="screen-kols" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="page-title">&#128104;&#8205;&#9877;&#65039; KOL Target List</div>
+        <div class="page-sub">Key Opinion Leaders ranked by publication influence — proxy for prescribing authority</div>
+      </div>
+      <span class="refresh-badge">&#128260; Scored from live PubMed data</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val green" id="kol-high">0</div><div class="stat-lbl">&#128308; High Priority</div></div>
+      <div class="stat-box"><div class="stat-val amber" id="kol-med">0</div><div class="stat-lbl">&#128993; Medium Priority</div></div>
+      <div class="stat-box"><div class="stat-val blue" id="kol-total">0</div><div class="stat-lbl">Total KOLs Scored</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128203; Scoring Formula</div>
+      <div class="formula-box">
+        Priority Score = (Publication frequency) + (Inclusion in SLR weight x2) + Recency bonus
+        <div class="formula-code">score = papers_found * weight | HIGH >= 6 | MEDIUM >= 3 | LOW &lt; 3</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128203; KOL Priority List</div>
+      <div class="table-wrap">
+        <table class="data-table" id="kol-table">
+          <thead><tr>
+            <th>Rank</th><th>Author / KOL</th><th>Papers Found</th>
+            <th>Active Years</th><th>Key Journals</th><th>Score</th><th>Priority</th>
+          </tr></thead>
+          <tbody id="kol-tbody">
+            <tr><td colspan="7" class="empty-msg">Run the agent to see KOL rankings</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: LITERATURE DB -->
+  <div id="screen-papers" class="screen">
+    <div class="topbar">
+      <div>
+        <div class="page-title">&#128218; Literature Database</div>
+        <div class="page-sub">All papers fetched from PubMed and stored in local SQLite DB</div>
+      </div>
+      <span class="badge" id="papers-count-badge">0 papers</span>
+    </div>
+    <div class="card">
+      <div class="filter-row">
+        <input class="search-box" id="paper-search" placeholder="&#128269;  Search by title, author, journal..." oninput="filterPapers()">
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="papers-table">
+          <thead><tr>
+            <th>PMID</th><th>Year</th><th>Title</th><th>Authors</th><th>Journal</th><th>Country</th>
+          </tr></thead>
+          <tbody id="papers-tbody">
+            <tr><td colspan="6" class="empty-msg">Loading papers from database...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;text-align:right">
+        <button class="btn-secondary" onclick="loadMorePapers()">Load More</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

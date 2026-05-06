@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────
+# Medical Affairs AI Agent — POC Requirements
+# ─────────────────────────────────────────────────────────────
+# Install:  pip install -r requirements.txt
+# Python:   3.10+
+# ─────────────────────────────────────────────────────────────
+
+# ── PubMed API & data parsing ─────────────────────────────────
+requests==2.31.0          # HTTP calls to NCBI E-utilities API
+xmltodict==0.13.0         # Parse PubMed XML responses
+
+# ── Environment & config ──────────────────────────────────────
+python-dotenv==1.0.1      # Load .env file (API keys)
+
+# ── AI / LLM (optional — used if OPENAI_API_KEY is set) ───────
+openai==1.30.5            # GPT-4o-mini for SLR screening & extraction
+
+# ── Web API (FastAPI backend for the POC UI) ──────────────────
+fastapi==0.111.0          # REST API framework
+uvicorn[standard]==0.29.0 # ASGI server to run FastAPI
+python-multipart==0.0.9   # Form data support in FastAPI
+
+# ── Standard library (no install needed, listed for clarity) ──
+# sqlite3   — built-in, used for local paper storage
+# json      — built-in
+# re        — built-in
+# datetime  — built-in
+
+# pip install -r poc/requirements.txt
+# cd poc/backend
+# python api_server.py
+# Open http://localhost:8000
+
