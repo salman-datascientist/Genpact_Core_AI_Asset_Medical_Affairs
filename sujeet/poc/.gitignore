@@ -1,0 +1,25 @@
+__pycache__
+.idea
+.vscode
+.ipynb_checkpoints
+*.sql
+*.csv
+*.xls
+*.xlsb
+*.xlsx
+*.json
+logs
+*.zip
+*.DS_Store
+.env
+
+# Ignore data folder contents but keep the folder itself (via .gitkeep)
+data/*
+!data/.gitkeep
+
+# Ignore output reports but keep the folder itself
+outputs/*
+!outputs/.gitkeep
+
+# Ignore experiments
+experiement/*
