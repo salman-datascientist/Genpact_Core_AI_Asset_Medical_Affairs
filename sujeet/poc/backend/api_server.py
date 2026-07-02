@@ -19,7 +19,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # Fix Windows charmap encoding errors when printing Unicode from paper abstracts
 if hasattr(sys.stdout, 'reconfigure'):
@@ -78,12 +78,40 @@ class AgentRequest(BaseModel):
     year_from:   str = "2019"
     year_to:     str = "2024"
     request_type:str = "Integrated Evidence Plan"
+    pubmed_tier: str = "no_api_key"
+    pubmed_requests_per_second: float = Field(default=3.0, gt=0, le=10)
 
 
 # ── Health check ─────────────────────────────────────────────────────────────
 @app.get("/api/health")
 def health():
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
+
+
+@app.get("/api/pubmed-config")
+def pubmed_config():
+    """Return NCBI rate-limit disclosure and whether a PubMed API key is configured."""
+    from tools.pubmed_rate_limiter import (
+        NCBI_DISCLOSURE,
+        NCBI_MAX_RPS_NO_KEY,
+        NCBI_MAX_RPS_WITH_KEY,
+    )
+
+    api_key = os.getenv("PUBMED_API_KEY", "").strip()
+    has_api_key = bool(api_key)
+    default_tier = "with_api_key" if has_api_key else "no_api_key"
+    default_rps = (
+        NCBI_MAX_RPS_WITH_KEY if has_api_key else NCBI_MAX_RPS_NO_KEY
+    )
+
+    return {
+        "has_api_key": has_api_key,
+        "max_without_key": NCBI_MAX_RPS_NO_KEY,
+        "max_with_key": NCBI_MAX_RPS_WITH_KEY,
+        "default_tier": default_tier,
+        "default_requests_per_second": default_rps,
+        "disclosure": NCBI_DISCLOSURE,
+    }
 
 
 # ── Run agent in background thread ───────────────────────────────────────────
@@ -96,8 +124,19 @@ def _run_agent_thread(req: AgentRequest):
         # Override DB and output paths in tools so they use poc/data/ and poc/outputs/
         import tools.pubmed_tools as pt
         import tools.analysis_tools as at
+        from tools.pubmed_rate_limiter import configure_rate_limit
         pt.DB_PATH = DB_PATH
         at.OUTPUT_DIR = OUTPUT_DIR  # analysis_tools saves report here
+
+        effective_rps = configure_rate_limit(
+            tier=req.pubmed_tier,
+            requests_per_second=req.pubmed_requests_per_second,
+            has_api_key=bool(os.getenv("PUBMED_API_KEY", "").strip()),
+        )
+        agent_status["pubmed_rate"] = {
+            "tier": req.pubmed_tier,
+            "requests_per_second": effective_rps,
+        }
 
         from agent_core import MedicalAffairsAgent, ToolRegistry
         from tools.pubmed_tools import pubmed_search, pubmed_fetch, save_to_db
@@ -181,6 +220,17 @@ def run_agent(req: AgentRequest):
     if agent_status["running"]:
         return JSONResponse({"error": "Agent already running"}, status_code=409)
 
+    from tools.pubmed_rate_limiter import configure_rate_limit
+
+    try:
+        configure_rate_limit(
+            tier=req.pubmed_tier,
+            requests_per_second=req.pubmed_requests_per_second,
+            has_api_key=bool(os.getenv("PUBMED_API_KEY", "").strip()),
+        )
+    except ValueError as exc:
+        return JSONResponse({"error": str(exc)}, status_code=400)
+
     agent_status = {
         "running":    True,
         "steps":      [],
@@ -190,6 +240,10 @@ def run_agent(req: AgentRequest):
         "done":       False,
         "error":      None,
         "result":     None,
+        "pubmed_rate": {
+            "tier": req.pubmed_tier,
+            "requests_per_second": req.pubmed_requests_per_second,
+        },
     }
 
     thread = threading.Thread(target=_run_agent_thread, args=(req,), daemon=True)
@@ -208,6 +262,7 @@ def get_agent_status():
         "done":      agent_status["done"],
         "error":     agent_status["error"],
         "started_at":agent_status["started_at"],
+        "pubmed_rate": agent_status.get("pubmed_rate"),
     }
 
 

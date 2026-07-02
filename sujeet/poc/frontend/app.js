@@ -1,11 +1,22 @@
 /* ── app.js — Medical Affairs AI POC Frontend Logic ─────── */
 
-const API = 'http://localhost:8000/api';
+const API = `${window.location.origin}/api`;
 let pollInterval = null;
 let startTime    = null;
 let allPapers    = [];
 let paperOffset  = 0;
 let resultData   = null;
+let pubmedConfig = {
+  has_api_key: false,
+  max_without_key: 3,
+  max_with_key: 10,
+  default_tier: 'no_api_key',
+  default_requests_per_second: 3,
+  disclosure: '',
+};
+let pubmedThrottleTimer = null;
+let pubmedMonitorActive = false;
+let lastPubMedMetrics = null;
 
 /* ── Navigation ─────────────────────────────────────────── */
 function showScreen(id) {
@@ -51,8 +62,310 @@ async function checkHealth() {
   }
 }
 
+/* ── PubMed rate limit UI ───────────────────────────────── */
+function getPubMedTierCap() {
+  const tier = document.getElementById('f-pubmed-tier').value;
+  return tier === 'with_api_key'
+    ? pubmedConfig.max_with_key
+    : pubmedConfig.max_without_key;
+}
+
+function buildPubMedMetrics(tier, rawRps) {
+  const cap = tier === 'with_api_key'
+    ? pubmedConfig.max_with_key
+    : pubmedConfig.max_without_key;
+  const rps = Math.min(Math.max(rawRps || 0, 0), cap);
+  const delaySec = rps > 0 ? (1 / rps + 0.02) : 0;
+  const utilization = cap > 0 ? Math.min((rps / cap) * 100, 100) : 0;
+  const estCalls = 5;
+
+  let status = 'safe';
+  let statusText = `Within NCBI limits — ${rps} req/s uses ${utilization.toFixed(0)}% of your ${cap} req/s allowance.`;
+  let badgeText = pubmedConfig.has_api_key ? 'API Key Active' : 'No API Key';
+
+  if (!Number.isFinite(rawRps) || rawRps <= 0) {
+    status = 'danger';
+    statusText = 'Enter a valid requests-per-second value greater than 0.';
+    badgeText = 'Invalid Rate';
+  } else if (rawRps > cap) {
+    status = 'danger';
+    statusText = `Rate exceeds NCBI limit — max ${cap} req/s for ${tier === 'with_api_key' ? 'API key' : 'no-key'} tier. Lower the value to avoid HTTP 429 errors.`;
+    badgeText = 'Over Limit';
+  } else if (utilization >= 85) {
+    status = 'warn';
+    statusText = `Approaching NCBI cap — ${utilization.toFixed(0)}% of ${cap} req/s used. Consider lowering to reduce 429 risk.`;
+    badgeText = 'Near Limit';
+  } else if (tier === 'with_api_key' && pubmedConfig.has_api_key) {
+    statusText = `Optimized for NCBI API key tier — ${rps} req/s with ~${delaySec.toFixed(2)}s spacing between calls.`;
+  } else {
+    statusText = `Conservative NCBI no-key tier — ${rps} req/s keeps you under the 3 req/s public limit.`;
+  }
+
+  return {
+    tier,
+    cap,
+    rps: Number.isFinite(rawRps) ? rawRps : 0,
+    delaySec,
+    utilization,
+    estCalls,
+    estDurationSec: estCalls * delaySec,
+    status,
+    statusText,
+    badgeText,
+  };
+}
+
+function computePubMedMetrics(rpsOverride) {
+  const tier = document.getElementById('f-pubmed-tier').value;
+  const rawRps = rpsOverride ?? parseFloat(document.getElementById('f-pubmed-rps').value);
+  return buildPubMedMetrics(tier, rawRps);
+}
+
+function setMetricValue(id, text, statusClass) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.textContent !== text) {
+    el.textContent = text;
+    el.classList.remove('safe', 'warn', 'danger');
+    if (statusClass) el.classList.add(statusClass);
+    const metric = el.closest('.pubmed-metric');
+    if (metric) {
+      metric.classList.remove('bump');
+      void metric.offsetWidth;
+      metric.classList.add('bump');
+    }
+  }
+}
+
+function applyPubMedStatusClasses(prefix, status) {
+  const targets = [
+    document.getElementById(`${prefix}-status-message`) || document.getElementById('pubmed-status-message'),
+    document.getElementById('pubmed-disclosure-banner'),
+    document.getElementById('pubmed-live-badge'),
+    document.getElementById('pubmed-monitor-badge'),
+    document.getElementById('pubmed-monitor-message'),
+  ].filter(Boolean);
+
+  targets.forEach(el => {
+    el.classList.remove('neutral', 'safe', 'warn', 'danger', 'active', 'loaded');
+    if (status) el.classList.add(status);
+  });
+}
+
+function updatePubMedRateUI() {
+  const tierEl = document.getElementById('f-pubmed-tier');
+  const rpsEl = document.getElementById('f-pubmed-rps');
+  const cap = getPubMedTierCap();
+  const tier = tierEl.value;
+
+  rpsEl.max = cap;
+  if (parseFloat(rpsEl.value) > cap) {
+    rpsEl.value = cap;
+  }
+
+  const withKeyOption = tierEl.querySelector('option[value="with_api_key"]');
+  if (withKeyOption) {
+    withKeyOption.disabled = !pubmedConfig.has_api_key;
+  }
+
+  if (tier === 'with_api_key' && !pubmedConfig.has_api_key) {
+    tierEl.value = 'no_api_key';
+  }
+
+  const metrics = computePubMedMetrics();
+  lastPubMedMetrics = metrics;
+
+  document.getElementById('pubmed-tier-hint').textContent =
+    metrics.tier === 'with_api_key'
+      ? `Using PUBMED_API_KEY from backend/.env (NCBI max ${pubmedConfig.max_with_key} req/s).`
+      : `No API key detected — NCBI max ${pubmedConfig.max_without_key} req/s.`;
+
+  document.getElementById('pubmed-rps-hint').textContent =
+    `Allowed range: 0.1 to ${metrics.cap} requests/second for the selected tier.`;
+
+  setMetricValue('metric-cap', String(metrics.cap));
+  setMetricValue('metric-rps', metrics.rps.toFixed(1), metrics.status);
+  setMetricValue('metric-delay', `${metrics.delaySec.toFixed(2)}s`);
+  setMetricValue('metric-util', `${metrics.utilization.toFixed(0)}%`, metrics.status);
+
+  const meterFill = document.getElementById('pubmed-meter-fill');
+  const meterMarker = document.getElementById('pubmed-meter-marker');
+  meterFill.style.width = `${metrics.utilization}%`;
+  meterFill.classList.remove('safe', 'warn', 'danger');
+  meterFill.classList.add(metrics.status);
+  meterMarker.style.left = `${Math.min(metrics.utilization, 100)}%`;
+
+  document.getElementById('pubmed-meter-caption').textContent =
+    `${metrics.utilization.toFixed(0)}% of ${metrics.cap} req/s NCBI allowance`;
+
+  const statusMsg = document.getElementById('pubmed-status-message');
+  statusMsg.textContent = metrics.statusText;
+  statusMsg.classList.remove('neutral', 'safe', 'warn', 'danger');
+  statusMsg.classList.add(metrics.status);
+
+  const badge = document.getElementById('pubmed-live-badge');
+  badge.classList.remove('active', 'warn', 'danger');
+  badge.classList.add(metrics.status === 'safe' ? 'active' : metrics.status);
+  document.getElementById('pubmed-status-label').textContent = metrics.badgeText;
+
+  rpsEl.classList.toggle('input-error', !validatePubMedRate(false));
+}
+
+function startPubMedThrottleAnimation(metrics) {
+  stopPubMedThrottleAnimation();
+  if (!metrics || metrics.rps <= 0) return;
+
+  pubmedMonitorActive = true;
+  const card = document.getElementById('pubmed-monitor-card');
+  card.style.display = 'block';
+
+  setMetricValue('monitor-rps', `${metrics.rps.toFixed(1)} req/s`);
+  setMetricValue('monitor-delay', `${metrics.delaySec.toFixed(2)}s`);
+  setMetricValue('monitor-calls', String(metrics.estCalls));
+
+  const badge = document.getElementById('pubmed-monitor-badge');
+  const stateEl = document.getElementById('pubmed-monitor-state');
+  const msgEl = document.getElementById('pubmed-monitor-message');
+  badge.classList.add('active');
+  stateEl.textContent = 'Throttling';
+  msgEl.textContent = `PubMed calls spaced at ${metrics.delaySec.toFixed(2)}s — respecting NCBI ${metrics.cap} req/s cap.`;
+  msgEl.classList.add('active');
+
+  let remaining = metrics.delaySec;
+  const fill = document.getElementById('pubmed-throttle-fill');
+  const countdownEl = document.getElementById('monitor-countdown');
+
+  pubmedThrottleTimer = setInterval(() => {
+    remaining -= 0.1;
+    if (remaining <= 0) remaining = metrics.delaySec;
+    const pct = ((metrics.delaySec - remaining) / metrics.delaySec) * 100;
+    fill.style.width = `${pct}%`;
+    countdownEl.textContent = `${remaining.toFixed(1)}s`;
+  }, 100);
+}
+
+function stopPubMedThrottleAnimation() {
+  pubmedMonitorActive = false;
+  if (pubmedThrottleTimer) {
+    clearInterval(pubmedThrottleTimer);
+    pubmedThrottleTimer = null;
+  }
+  const fill = document.getElementById('pubmed-throttle-fill');
+  if (fill) fill.style.width = '0%';
+}
+
+function updatePubMedProgressMonitor(agentStatus) {
+  const card = document.getElementById('pubmed-monitor-card');
+  const steps = agentStatus.steps || [];
+  const currentStep = steps.length;
+  const isPubMedStep = currentStep >= 1 && currentStep <= 3 && agentStatus.running;
+  const metrics = agentStatus.pubmed_rate
+    ? buildPubMedMetrics(
+        agentStatus.pubmed_rate.tier || 'no_api_key',
+        agentStatus.pubmed_rate.requests_per_second
+      )
+    : lastPubMedMetrics;
+
+  if (!metrics) return;
+
+  if (isPubMedStep) {
+    card.style.display = 'block';
+    if (!pubmedMonitorActive) startPubMedThrottleAnimation(metrics);
+
+    const msgEl = document.getElementById('pubmed-monitor-message');
+    const stepNames = ['PubMed RWE search', 'PubMed competitor search', 'PubMed metadata fetch'];
+    msgEl.textContent = `Active: ${stepNames[currentStep - 1] || 'PubMed call'} — throttled to ${metrics.rps} req/s (~${metrics.estDurationSec.toFixed(0)}s total PubMed phase).`;
+  } else if (agentStatus.done) {
+    stopPubMedThrottleAnimation();
+    card.style.display = 'block';
+    const hasRateError = steps.some(s => /rate limit|429|PubMed rate/i.test(s.observation || ''));
+    const badge = document.getElementById('pubmed-monitor-badge');
+    const stateEl = document.getElementById('pubmed-monitor-state');
+    const msgEl = document.getElementById('pubmed-monitor-message');
+
+    badge.classList.remove('active', 'warn', 'danger');
+    msgEl.classList.remove('active', 'warn', 'danger');
+
+    if (hasRateError) {
+      badge.classList.add('danger');
+      stateEl.textContent = 'Rate Limited';
+      msgEl.textContent = 'PubMed returned rate-limit errors. Lower requests/second and retry.';
+      msgEl.classList.add('danger');
+      document.getElementById('monitor-countdown').textContent = '429';
+    } else {
+      badge.classList.add('active');
+      stateEl.textContent = 'Complete';
+      msgEl.textContent = `PubMed phase finished at ${metrics.rps} req/s — all calls within NCBI limits.`;
+      msgEl.classList.add('active');
+      document.getElementById('monitor-countdown').textContent = 'Done';
+    }
+  } else if (!agentStatus.running) {
+    stopPubMedThrottleAnimation();
+  }
+}
+
+function validatePubMedRate(showAlert = true) {
+  const tier = document.getElementById('f-pubmed-tier').value;
+  const rpsEl = document.getElementById('f-pubmed-rps');
+  const rps = parseFloat(rpsEl.value);
+  const cap = getPubMedTierCap();
+
+  if (!Number.isFinite(rps) || rps <= 0) {
+    if (showAlert) alert('Requests per second must be greater than 0.');
+    rpsEl.classList.add('input-error');
+    return false;
+  }
+
+  if (rps > cap) {
+    if (showAlert) {
+      alert(
+        `Requests per second cannot exceed ${cap} for the selected NCBI tier.\n\n` +
+        pubmedConfig.disclosure
+      );
+    }
+    rpsEl.classList.add('input-error');
+    return false;
+  }
+
+  if (tier === 'with_api_key' && !pubmedConfig.has_api_key) {
+    if (showAlert) {
+      alert('The "With API key" tier requires PUBMED_API_KEY in backend/.env.');
+    }
+    return false;
+  }
+
+  rpsEl.classList.remove('input-error');
+  return true;
+}
+
+async function loadPubMedConfig() {
+  try {
+    const r = await fetch(`${API}/pubmed-config`, { signal: AbortSignal.timeout(3000) });
+    if (!r.ok) return;
+    pubmedConfig = await r.json();
+
+    document.getElementById('pubmed-disclosure').textContent = pubmedConfig.disclosure;
+    document.getElementById('pubmed-disclosure-banner').classList.add('loaded');
+
+    const tierEl = document.getElementById('f-pubmed-tier');
+    tierEl.value = pubmedConfig.default_tier;
+    document.getElementById('f-pubmed-rps').value =
+      pubmedConfig.default_requests_per_second;
+
+    updatePubMedRateUI();
+  } catch (e) {
+    document.getElementById('pubmed-disclosure').textContent =
+      'Could not load NCBI rate-limit settings from the API.';
+    document.getElementById('pubmed-status-message').textContent =
+      'Connect to the API server to load NCBI rate-limit guidance.';
+    document.getElementById('pubmed-status-label').textContent = 'Offline';
+  }
+}
+
 /* ── Run Agent ──────────────────────────────────────────── */
 async function runAgent() {
+  if (!validatePubMedRate(true)) return;
+
   const btn = document.getElementById('btn-run');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Starting Agent...';
@@ -67,6 +380,8 @@ async function runAgent() {
     request_type: document.getElementById('req-type').value,
     geography:    [...document.querySelectorAll('.geo-tag.selected')]
                     .map(t => t.textContent.trim()).join(', ') || 'United States',
+    pubmed_tier: document.getElementById('f-pubmed-tier').value,
+    pubmed_requests_per_second: parseFloat(document.getElementById('f-pubmed-rps').value),
   };
 
   try {
@@ -75,7 +390,17 @@ async function runAgent() {
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify(payload)
     });
-    if(!r.ok) { const e = await r.json(); throw new Error(e.error || r.statusText); }
+    if(!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      throw new Error(e.error || r.statusText);
+    }
+
+    const pubmedRate = payload.pubmed_requests_per_second;
+    lastPubMedMetrics = computePubMedMetrics(pubmedRate);
+    addLog('info', `PubMed rate limit set to ${pubmedRate} req/s (${payload.pubmed_tier}) — ~${lastPubMedMetrics.delaySec.toFixed(2)}s between calls.`);
+
+    document.getElementById('pubmed-monitor-card').style.display = 'block';
+    startPubMedThrottleAnimation(lastPubMedMetrics);
 
     startTime = Date.now();
     document.getElementById('chip-drug').textContent   = payload.drug;
@@ -90,7 +415,12 @@ async function runAgent() {
     startPolling();
 
   } catch(err) {
-    alert('Error starting agent: ' + err.message + '\n\nMake sure the API server is running:\n  cd poc/backend\n  python api_server.py');
+    const isRateLimit = /rate limit|429|requests\/second|pubmed tier/i.test(err.message || '');
+    alert(
+      (isRateLimit ? 'PubMed rate limit error:\n\n' : 'Error starting agent: ') +
+      err.message +
+      '\n\nMake sure the API server is running:\n  cd poc/backend\n  python api_server.py'
+    );
     btn.disabled = false;
     btn.innerHTML = '⚡ Generate Evidence Package →';
   }
@@ -121,14 +451,20 @@ async function pollStatus() {
     const r = await fetch(`${API}/agent-status`);
     const s = await r.json();
     updateProgressUI(s);
+    updatePubMedProgressMonitor(s);
     if(s.done) {
       clearInterval(pollInterval);
+      stopPubMedThrottleAnimation();
+      updatePubMedProgressMonitor(s);
       document.getElementById('btn-run').disabled = false;
       document.getElementById('btn-run').innerHTML = '&#9889; Generate Evidence Package &#8594;';
       document.getElementById('prog-badge').textContent = s.error ? 'ERROR' : 'COMPLETE';
       if(s.error) {
         const firstLine = (s.error||'').split('\n')[0];
         addLog('error', 'AGENT FAILED: ' + firstLine);
+        if (/rate limit|429|PubMed/i.test(s.error)) {
+          addLog('warn', 'Tip: Lower PubMed requests/second on the request form and retry.');
+        }
         addLog('warn', 'Check the server terminal for full traceback.');
         document.getElementById('prog-pct-label').textContent = 'Agent failed — see log below';
       } else {
@@ -144,8 +480,11 @@ async function pollStatus() {
 function updateProgressUI(s) {
   const pct = s.progress || 0;
   document.getElementById('prog-bar').style.width = pct + '%';
+  const rateLabel = s.pubmed_rate
+    ? ` · PubMed ${s.pubmed_rate.requests_per_second} req/s`
+    : (lastPubMedMetrics ? ` · PubMed ${lastPubMedMetrics.rps} req/s` : '');
   document.getElementById('prog-pct-label').textContent =
-    `${pct}% complete — Step ${s.steps.length} of 9 ${s.running?'running':''}`;
+    `${pct}% complete — Step ${s.steps.length} of 9 ${s.running?'running':''}${rateLabel}`;
 
   if(startTime) {
     const elapsed = Math.round((Date.now() - startTime)/1000);
@@ -174,21 +513,25 @@ function renderSteps(steps) {
     const name = STEP_NAMES[i] || `Step ${i+1}`;
     if(step) {
       const obs = (step.observation||'').substring(0,200);
-      html += `<div class="step-row done">
+      const isRateErr = /rate limit|429|PubMed rate/i.test(step.observation || '');
+      html += `<div class="step-row done${isRateErr ? ' error' : ''}">
         <div class="step-icon">${icon}</div>
         <div class="step-body">
           <div class="step-name">Step ${i+1} — ${name}</div>
           <div class="step-detail">${obs}</div>
-          <span class="step-status ss-done">✔ Complete</span>
+          <span class="step-status ${isRateErr ? 'ss-error' : 'ss-done'}">${isRateErr ? '⚠ Rate limit issue' : '✔ Complete'}</span>
         </div></div>`;
-      addLog('success', `Step ${i+1} complete: ${obs.substring(0,80)}`);
+      addLog(isRateErr ? 'warn' : 'success', `Step ${i+1} complete: ${obs.substring(0,80)}`);
     } else if(i === steps.length) {
+      const isPubMedStep = i <= 2;
       html += `<div class="step-row running">
         <div class="step-icon">${icon}</div>
         <div class="step-body">
           <div class="step-name"><span class="spinner"></span>Step ${i+1} — ${name}</div>
-          <div class="step-detail">Processing...</div>
-          <span class="step-status ss-running">⚡ Running</span>
+          <div class="step-detail">${isPubMedStep && lastPubMedMetrics
+            ? `Throttling PubMed calls at ${lastPubMedMetrics.rps} req/s (~${lastPubMedMetrics.delaySec.toFixed(2)}s spacing)...`
+            : 'Processing...'}</div>
+          <span class="step-status ss-running">${isPubMedStep ? '⏱ Rate-limited' : '⚡ Running'}</span>
         </div></div>`;
     } else {
       html += `<div class="step-row pending">
@@ -253,12 +596,12 @@ function renderEvidence(data) {
     <td>${r.year||'—'}</td>
     <td style="max-width:240px;font-weight:500">${(r.title||'').substring(0,80)}${r.title&&r.title.length>80?'...':''}</td>
     <td style="white-space:nowrap">${(r.authors||'').substring(0,30)}</td>
-    <td style="font-size:11px;color:#64748B">${(r.journal||'').substring(0,35)}</td>
+    <td style="font-size:11px;color:#5A7189">${(r.journal||'').substring(0,35)}</td>
     <td style="text-align:center">${r.n_patients||'—'}</td>
     <td><b>${r.drug||'—'}</b></td>
     <td>${r.comparator||'—'}</td>
     <td style="text-align:center;font-weight:600;color:${r.pfs_months?'#16A34A':'#94A3B8'}">${r.pfs_months!=null?r.pfs_months+'mo':'—'}</td>
-    <td style="text-align:center;font-weight:600;color:${r.os_months?'#2563EB':'#94A3B8'}">${r.os_months!=null?r.os_months+'mo':'—'}</td>
+    <td style="text-align:center;font-weight:600;color:${r.os_months?'#00AECF':'#94A3B8'}">${r.os_months!=null?r.os_months+'mo':'—'}</td>
     <td><span style="font-size:10px;background:#F1F5F9;padding:2px 6px;border-radius:6px">${r.study_design||'—'}</span></td>
     <td>${r.country||'—'}</td>
   </tr>`).join('');
@@ -303,11 +646,11 @@ function renderKOLs(data) {
     const pillCls = k.priority==='HIGH'?'pill-high':k.priority==='MEDIUM'?'pill-med':'pill-low';
     return `<tr>
       <td style="text-align:center;font-weight:700">#${k.rank}</td>
-      <td style="font-weight:600;color:#1E3A5F">${k.name||'—'}</td>
+      <td style="font-weight:600;color:#073161">${k.name||'—'}</td>
       <td style="text-align:center">${k.papers_found||0}</td>
       <td>${(k.active_years||[]).join(', ')||'—'}</td>
-      <td style="font-size:11px;color:#64748B">${(k.journals||[]).join(', ').substring(0,60)||'—'}</td>
-      <td style="text-align:center;font-weight:800;color:#1E3A5F">${k.kol_score||0}</td>
+      <td style="font-size:11px;color:#5A7189">${(k.journals||[]).join(', ').substring(0,60)||'—'}</td>
+      <td style="text-align:center;font-weight:800;color:#073161">${k.kol_score||0}</td>
       <td><span class="${pillCls}">${k.priority}</span></td>
     </tr>`;
   }).join('');
@@ -335,10 +678,10 @@ function renderPapersTable(papers) {
     return;
   }
   tbody.innerHTML = papers.map(p => `<tr>
-    <td><a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}" target="_blank" style="color:#2563EB;text-decoration:none;font-weight:600">${p.pmid}</a></td>
+    <td><a href="https://pubmed.ncbi.nlm.nih.gov/${p.pmid}" target="_blank" style="color:#00AECF;text-decoration:none;font-weight:600">${p.pmid}</a></td>
     <td style="text-align:center;font-weight:600">${p.pub_year||'—'}</td>
     <td style="max-width:300px;font-size:12px">${(p.title||'').substring(0,100)}${(p.title||'').length>100?'...':''}</td>
-    <td style="font-size:11px;color:#64748B;white-space:nowrap">${(p.authors||[]).slice(0,2).join(', ')}${(p.authors||[]).length>2?' et al.':''}</td>
+    <td style="font-size:11px;color:#5A7189;white-space:nowrap">${(p.authors||[]).slice(0,2).join(', ')}${(p.authors||[]).length>2?' et al.':''}</td>
     <td style="font-size:11px">${(p.journal||'').substring(0,40)}</td>
     <td>${p.country||'—'}</td>
   </tr>`).join('');
@@ -382,7 +725,9 @@ function exportCSV() {
 /* ── Init ────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', () => {
   checkHealth();
+  loadPubMedConfig();
   setInterval(checkHealth, 30000);
+  document.getElementById('f-pubmed-rps').addEventListener('input', updatePubMedRateUI);
   // Auto-load results if available
   loadResults();
 });

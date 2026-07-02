@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MedAffairs AI — POC Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💊</text></svg>">
+<title>Medical Affairs AI | Genpact CORE AI Asset</title>
+<link rel="icon" href="assets/genpact-logo-color.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,8 +11,15 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="logo">&#128138; MedAffairs AI <span class="logo-badge">POC</span></div>
-  <div class="nav-section">MAIN</div>
+  <a href="https://www.genpact.com" target="_blank" rel="noopener noreferrer" class="brand-lockup" title="Genpact®">
+    <img src="assets/genpact-logo-white.svg" alt="Genpact®" class="genpact-logo">
+    <span class="brand-tagline">on it</span>
+  </a>
+  <div class="product-name">
+    Medical Affairs AI
+    <span class="logo-badge">CORE AI POC</span>
+  </div>
+  <div class="nav-section">WORKSPACE</div>
   <div class="nav-item active" onclick="showScreen('screen-request')" id="nav-request">
     <span>&#128203;</span> New Request
   </div>
@@ -33,15 +40,41 @@
     <span>&#128218;</span> Literature DB
   </div>
   <div class="sidebar-footer">
+    <div class="trademark-notice">Genpact<sup>®</sup> is a registered trademark of Genpact.</div>
     <div class="api-status" id="api-status">&#9679; Connecting...</div>
   </div>
 </aside>
 
 <!-- MAIN -->
+<div class="app-shell">
+<header class="app-header">
+  <div class="app-header-inner">
+    <img src="assets/genpact-logo-color.svg" alt="Genpact®" class="header-logo">
+    <div class="header-meta">
+      <span class="header-eyebrow">CORE AI ASSET · MEDICAL AFFAIRS</span>
+      <span class="header-tagline">Agentic evidence generation powered by PubMed &amp; AI</span>
+    </div>
+    <a href="https://www.genpact.com" target="_blank" rel="noopener noreferrer" class="header-cta">Explore Genpact</a>
+  </div>
+</header>
+
 <main class="main">
 
   <!-- SCREEN 1: REQUEST -->
   <div id="screen-request" class="screen active">
+    <section class="hero-banner">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Business, made agentic</span>
+        <h1 class="hero-title">Integrated Evidence Plans from live PubMed data</h1>
+        <p class="hero-sub">Search literature, screen via PICO, extract structured evidence, identify gaps, and score KOLs — automatically.</p>
+      </div>
+      <div class="hero-stat-strip">
+        <div class="hero-stat"><strong>9</strong><span>Agent steps</span></div>
+        <div class="hero-stat"><strong>~60s</strong><span>Typical runtime</span></div>
+        <div class="hero-stat"><strong>Live</strong><span>PubMed API</span></div>
+      </div>
+    </section>
+
     <div class="topbar">
       <div>
         <div class="page-title">New Evidence Request</div>
@@ -149,6 +182,74 @@
       </div>
     </div>
 
+    <div class="card pubmed-rate-card">
+      <div class="card-title">
+        &#128200; PubMed API Rate Limit
+        <span class="pubmed-live-badge" id="pubmed-live-badge">
+          <span class="pubmed-pulse-dot"></span>
+          <span id="pubmed-status-label">Checking...</span>
+        </span>
+      </div>
+
+      <div class="pubmed-disclosure-banner" id="pubmed-disclosure-banner">
+        <div class="pubmed-disclosure-icon">&#8505;&#65039;</div>
+        <div class="pubmed-disclosure-body">
+          <div class="pubmed-disclosure-title">NCBI E-utilities Policy</div>
+          <div id="pubmed-disclosure">Loading NCBI E-utilities rate limit guidance...</div>
+        </div>
+      </div>
+
+      <div class="pubmed-metrics-grid">
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="metric-cap">—</div>
+          <div class="pubmed-metric-lbl">NCBI Max (req/s)</div>
+        </div>
+        <div class="pubmed-metric highlight">
+          <div class="pubmed-metric-val" id="metric-rps">—</div>
+          <div class="pubmed-metric-lbl">Your Rate (req/s)</div>
+        </div>
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="metric-delay">—</div>
+          <div class="pubmed-metric-lbl">Delay / Call</div>
+        </div>
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="metric-util">—</div>
+          <div class="pubmed-metric-lbl">Cap Used</div>
+        </div>
+      </div>
+
+      <div class="pubmed-meter-wrap">
+        <div class="pubmed-meter-labels">
+          <span>Rate utilization</span>
+          <span id="pubmed-meter-caption">0% of NCBI allowance</span>
+        </div>
+        <div class="pubmed-meter-track">
+          <div class="pubmed-meter-fill" id="pubmed-meter-fill" style="width:0%"></div>
+          <div class="pubmed-meter-marker" id="pubmed-meter-marker" style="left:100%"></div>
+        </div>
+      </div>
+
+      <div class="pubmed-status-message" id="pubmed-status-message">
+        Configure your PubMed request rate below.
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">NCBI Access Tier *</label>
+          <select class="form-select" id="f-pubmed-tier" onchange="updatePubMedRateUI()">
+            <option value="no_api_key">No API key (max 3 req/s)</option>
+            <option value="with_api_key">With API key (max 10 req/s)</option>
+          </select>
+          <div class="field-hint" id="pubmed-tier-hint"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Requests Per Second *</label>
+          <input class="form-input" type="number" id="f-pubmed-rps" min="0.1" max="10" step="0.1" value="3">
+          <div class="field-hint" id="pubmed-rps-hint">Must stay at or below the NCBI limit for your tier.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="btn-row">
       <button class="btn-secondary">&#128190; Save Draft</button>
       <button class="btn-primary" id="btn-run" onclick="runAgent()">
@@ -202,6 +303,40 @@
         <span id="prog-eta">—</span>
       </div>
       <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
+    </div>
+
+    <div class="card pubmed-monitor-card" id="pubmed-monitor-card" style="display:none">
+      <div class="card-title">
+        &#128200; PubMed Rate Monitor
+        <span class="pubmed-live-badge active" id="pubmed-monitor-badge">
+          <span class="pubmed-pulse-dot"></span>
+          <span id="pubmed-monitor-state">Idle</span>
+        </span>
+      </div>
+      <div class="pubmed-monitor-message" id="pubmed-monitor-message">
+        PubMed throttling will activate during literature search steps.
+      </div>
+      <div class="pubmed-metrics-grid compact">
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="monitor-rps">—</div>
+          <div class="pubmed-metric-lbl">Active Rate</div>
+        </div>
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="monitor-delay">—</div>
+          <div class="pubmed-metric-lbl">Delay / Call</div>
+        </div>
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="monitor-calls">0</div>
+          <div class="pubmed-metric-lbl">Est. API Calls</div>
+        </div>
+        <div class="pubmed-metric">
+          <div class="pubmed-metric-val" id="monitor-countdown">—</div>
+          <div class="pubmed-metric-lbl">Next Call In</div>
+        </div>
+      </div>
+      <div class="pubmed-throttle-bar">
+        <div class="pubmed-throttle-fill" id="pubmed-throttle-fill"></div>
+      </div>
     </div>
 
     <div class="card">
@@ -359,6 +494,22 @@
   </div>
 
 </main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <img src="assets/genpact-logo-color.svg" alt="Genpact®" class="footer-logo">
+    <div class="footer-copy">
+      <p>Copyright &copy; Genpact 2026. All rights reserved.</p>
+      <p class="footer-trademark">Genpact<sup>®</sup> and the Genpact logo are trademarks of Genpact. Unauthorized use is prohibited.</p>
+    </div>
+    <div class="footer-links">
+      <a href="https://www.genpact.com" target="_blank" rel="noopener noreferrer">genpact.com</a>
+      <a href="https://www.genpact.com/about-us" target="_blank" rel="noopener noreferrer">About</a>
+      <a href="https://www.genpact.com/contact-us" target="_blank" rel="noopener noreferrer">Contact</a>
+    </div>
+  </div>
+</footer>
+</div>
 
 <script src="app.js"></script>
 </body>

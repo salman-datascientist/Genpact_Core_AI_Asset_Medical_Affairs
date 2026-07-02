@@ -8,13 +8,18 @@ Tools:
 """
 
 import os
-import time
 import json
 import sqlite3
 import requests
 import xmltodict
 from datetime import datetime
 from dotenv import load_dotenv
+
+from tools.pubmed_rate_limiter import (
+    PubMedRateLimitError,
+    eutils_get,
+    get_rate_limiter,
+)
 
 load_dotenv()
 
@@ -23,7 +28,25 @@ BASE_URL       = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 # DB_PATH is relative — resolved from this file's location → poc/data/pubmed_papers.db
 # api_server.py overrides this at runtime to ensure it always points to poc/data/
 DB_PATH        = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "pubmed_papers.db"))
-DELAY          = 0.34   # 3 req/sec with API key
+
+
+def _format_pubmed_error(exc: Exception, context: str) -> str:
+    if isinstance(exc, PubMedRateLimitError):
+        return (
+            f"ERROR {context}: PubMed rate limit hit — {exc}. "
+            f"Current limit: {get_rate_limiter().max_requests_per_second:.1f} req/s. "
+            "Lower the requests/second setting or wait before retrying."
+        )
+    if isinstance(exc, requests.HTTPError):
+        return f"ERROR {context}: HTTP {exc.response.status_code} from PubMed — {exc}"
+    return f"ERROR {context}: {type(exc).__name__}: {exc}"
+
+
+def _eutils_params(extra: dict | None = None) -> dict:
+    params = dict(extra or {})
+    if PUBMED_API_KEY:
+        params["api_key"] = PUBMED_API_KEY
+    return params
 
 
 #  TOOL: pubmed_search 
@@ -34,15 +57,14 @@ def pubmed_search(query: str, max_results: int = 50,
     Search PubMed. Stores PMIDs in agent state.
     Returns a summary string for the agent to observe.
     """
-    params = {
+    params = _eutils_params({
         "db":      "pubmed",
         "term":    query,
         "retmax":  max_results,
         "retmode": "json",
-        "api_key": PUBMED_API_KEY,
-    }
+    })
     try:
-        resp = requests.get(f"{BASE_URL}/esearch.fcgi", params=params, timeout=15)
+        resp = eutils_get(f"{BASE_URL}/esearch.fcgi", params, timeout=15)
         resp.raise_for_status()
         data    = resp.json()
         pmids   = data["esearchresult"]["idlist"]
@@ -63,7 +85,7 @@ def pubmed_search(query: str, max_results: int = 50,
             f"First 5: {pmids[:5]}"
         )
     except Exception as e:
-        return f"ERROR pubmed_search: {e}"
+        return _format_pubmed_error(e, "pubmed_search")
 
 
 #  TOOL: pubmed_fetch 
@@ -88,15 +110,14 @@ def pubmed_fetch(_state=None, source: str = "state", **kwargs) -> str:
 
     for i in range(0, len(pmids), batch_size):
         batch = pmids[i: i + batch_size]
-        params = {
+        params = _eutils_params({
             "db":      "pubmed",
             "id":      ",".join(batch),
             "retmode": "xml",
             "rettype": "abstract",
-            "api_key": PUBMED_API_KEY,
-        }
+        })
         try:
-            resp = requests.get(f"{BASE_URL}/efetch.fcgi", params=params, timeout=30)
+            resp = eutils_get(f"{BASE_URL}/efetch.fcgi", params, timeout=30)
             resp.raise_for_status()
             data     = xmltodict.parse(resp.text)
             articles = data.get("PubmedArticleSet", {}).get("PubmedArticle", [])
@@ -120,11 +141,9 @@ def pubmed_fetch(_state=None, source: str = "state", **kwargs) -> str:
                     full["_label"]   = label
                     _state.papers_found[idx] = full
 
-            time.sleep(DELAY)
-
         except Exception as e:
             errors += 1
-            msg = f"Batch {i//batch_size + 1} error: {type(e).__name__}: {str(e)[:200]}"
+            msg = _format_pubmed_error(e, f"pubmed_fetch batch {i // batch_size + 1}")
             error_msgs.append(msg)
             print(f"[pubmed_fetch ERROR] {msg}")  # visible in server terminal
 
