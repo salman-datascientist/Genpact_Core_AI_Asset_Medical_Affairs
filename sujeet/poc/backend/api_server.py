@@ -352,8 +352,9 @@ def get_papers(limit: int = 50, offset: int = 0):
         return {"error": str(e), "papers": []}
 
 
-# ── Serve frontend static files (local dev only; Vercel serves public/) ───────
-if os.path.exists(FRONTEND_DIR) and not IS_VERCEL:
+# ── Serve frontend static files ───────────────────────────────────────────────
+# On Vercel, all routes are rewritten to this FastAPI app (see vercel.json).
+if os.path.exists(FRONTEND_DIR):
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 
