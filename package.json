@@ -1,0 +1,8 @@
+{
+  "name": "medaffairs-ai-poc",
+  "private": true,
+  "description": "Medical Affairs AI POC — Genpact CORE AI Asset (Vercel hobby deployment)",
+  "scripts": {
+    "build": "bash scripts/vercel-build.sh"
+  }
+}

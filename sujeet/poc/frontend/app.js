@@ -52,7 +52,9 @@ async function checkHealth() {
     const r = await fetch(`${API}/health`, {signal: AbortSignal.timeout(3000)});
     const el = document.getElementById('api-status');
     if(r.ok) {
-      el.textContent = '● API Connected';
+      const data = await r.json();
+      const platform = data.platform === 'vercel' ? ' · Vercel' : '';
+      el.textContent = `● API Connected${platform}`;
       el.className = 'api-status ok';
     } else { throw new Error(); }
   } catch {
@@ -320,7 +322,7 @@ async function runAgent() {
 
   const btn = document.getElementById('btn-run');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Starting Agent...';
+  btn.innerHTML = '<span class="spinner"></span> Running Agent...';
 
   const payload = {
     drug:         document.getElementById('f-drug').value,
@@ -340,19 +342,18 @@ async function runAgent() {
     const r = await fetch(`${API}/run-agent`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(120000),
     });
     if(!r.ok) {
       const e = await r.json().catch(() => ({}));
       throw new Error(e.error || r.statusText);
     }
 
+    const data = await r.json();
     const pubmedRate = payload.pubmed_requests_per_second;
     lastPubMedMetrics = computePubMedMetrics(pubmedRate);
     addLog('info', `PubMed rate limit set to ${pubmedRate} req/s (${payload.pubmed_tier}) — ~${lastPubMedMetrics.delaySec.toFixed(2)}s between calls.`);
-
-    document.getElementById('pubmed-monitor-card').style.display = 'block';
-    startPubMedThrottleAnimation(lastPubMedMetrics);
 
     startTime = Date.now();
     document.getElementById('chip-drug').textContent   = payload.drug;
@@ -361,17 +362,46 @@ async function runAgent() {
     document.getElementById('prog-chips').style.display = 'grid';
     document.getElementById('prog-sub').textContent    =
       `${payload.drug} · ${payload.indication} · ${payload.geography}`;
-    document.getElementById('prog-badge').textContent  = 'RUNNING';
-
     showScreen('screen-progress');
+
+    // Vercel serverless: agent runs synchronously in one request.
+    if (data.sync) {
+      document.getElementById('pubmed-monitor-card').style.display = 'block';
+      stopPubMedThrottleAnimation();
+      updateProgressUI({
+        running: false,
+        done: true,
+        progress: data.progress || 100,
+        steps: data.steps || [],
+        pubmed_rate: data.pubmed_rate,
+        error: null,
+      });
+      document.getElementById('prog-badge').textContent = 'COMPLETE';
+      document.getElementById('prog-bar').style.width = '100%';
+      if (data.result) {
+        resultData = data.result;
+        applyResultData(resultData);
+        addLog('success', 'Agent complete (Vercel sync mode).');
+      }
+      btn.disabled = false;
+      btn.innerHTML = '&#9889; Generate Evidence Package &#8594;';
+      return;
+    }
+
+    document.getElementById('pubmed-monitor-card').style.display = 'block';
+    startPubMedThrottleAnimation(lastPubMedMetrics);
+    document.getElementById('prog-badge').textContent  = 'RUNNING';
     startPolling();
 
   } catch(err) {
     const isRateLimit = /rate limit|429|requests\/second|pubmed tier/i.test(err.message || '');
+    const isTimeout = err.name === 'TimeoutError' || /timeout/i.test(err.message || '');
     alert(
-      (isRateLimit ? 'PubMed rate limit error:\n\n' : 'Error starting agent: ') +
+      (isRateLimit ? 'PubMed rate limit error:\n\n' :
+       isTimeout ? 'Agent timed out (Vercel Hobby ~10s; Pro up to 60s). Try fewer papers or upgrade plan.\n\n' :
+       'Error starting agent: ') +
       err.message +
-      '\n\nMake sure the API server is running:\n  cd poc/backend\n  python api_server.py'
+      '\n\nLocal dev: cd sujeet/poc/backend && python api_server.py'
     );
     btn.disabled = false;
     btn.innerHTML = '⚡ Generate Evidence Package →';
@@ -511,22 +541,25 @@ function addLog(type, msg) {
 }
 
 /* ── Load Results ────────────────────────────────────────── */
+function applyResultData(data) {
+  if (!data || data.error) return;
+  const sum = data.summary || {};
+  document.getElementById('t-papers').textContent   = sum.papers_found   || 0;
+  document.getElementById('t-included').textContent = sum.papers_included || (data.evidence_table||[]).length;
+  document.getElementById('t-evidence').textContent = (data.evidence_table||[]).length;
+  document.getElementById('t-gaps').textContent     = (data.gaps||[]).filter(g=>g.status==='GAP').length;
+
+  renderEvidence(data);
+  renderGaps(data);
+  renderKOLs(data);
+}
+
 async function loadResults() {
   try {
     const r = await fetch(`${API}/results/latest`);
     if(!r.ok) return;
     resultData = await r.json();
-    if(resultData.error) return;
-
-    const sum = resultData.summary || {};
-    document.getElementById('t-papers').textContent   = sum.papers_found   || 0;
-    document.getElementById('t-included').textContent = sum.papers_included || (resultData.evidence_table||[]).length;
-    document.getElementById('t-evidence').textContent = (resultData.evidence_table||[]).length;
-    document.getElementById('t-gaps').textContent     = (resultData.gaps||[]).filter(g=>g.status==='GAP').length;
-
-    renderEvidence(resultData);
-    renderGaps(resultData);
-    renderKOLs(resultData);
+    applyResultData(resultData);
   } catch(e) { console.warn('Results error', e); }
 }
 

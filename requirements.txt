@@ -1,0 +1,7 @@
+# Vercel serverless Python dependencies (hobby deployment)
+requests==2.31.0
+xmltodict==0.13.0
+python-dotenv==1.0.1
+openai==1.30.5
+fastapi==0.111.0
+python-multipart==0.0.9

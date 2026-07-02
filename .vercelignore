@@ -1,0 +1,28 @@
+# Local / secrets
+.env
+**/.env
+sujeet/poc/.venv/
+**/__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite
+*.sqlite3
+
+# Runtime data (ephemeral on Vercel anyway)
+sujeet/poc/data/*
+!sujeet/poc/data/.gitkeep
+sujeet/poc/outputs/*
+!sujeet/poc/outputs/.gitkeep
+
+# Vercel build output (generated at deploy time)
+public/
+
+# Dev / test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/

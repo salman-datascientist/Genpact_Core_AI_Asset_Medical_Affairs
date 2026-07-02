@@ -35,6 +35,8 @@ sys.path.insert(0, BACKEND_DIR)
 from dotenv import load_dotenv
 load_dotenv(os.path.join(BACKEND_DIR, ".env"))
 
+IS_VERCEL = bool(os.getenv("VERCEL"))
+
 app = FastAPI(title="Medical Affairs AI — POC API", version="1.0.0")
 
 # Allow frontend to call the API
@@ -47,8 +49,14 @@ app.add_middleware(
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 BASE_DIR     = BACKEND_DIR
-DATA_DIR     = os.path.abspath(os.path.join(BASE_DIR, "..", "data"))
-OUTPUT_DIR   = os.path.abspath(os.path.join(BASE_DIR, "..", "outputs"))
+if IS_VERCEL:
+    # Serverless filesystem is read-only except /tmp (ephemeral per invocation).
+    _RUNTIME_ROOT = os.path.join("/tmp", "medaffairs_poc")
+    DATA_DIR   = os.path.join(_RUNTIME_ROOT, "data")
+    OUTPUT_DIR = os.path.join(_RUNTIME_ROOT, "outputs")
+else:
+    DATA_DIR     = os.path.abspath(os.path.join(BASE_DIR, "..", "data"))
+    OUTPUT_DIR   = os.path.abspath(os.path.join(BASE_DIR, "..", "outputs"))
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 DB_PATH      = os.path.join(DATA_DIR, "pubmed_papers.db")
 
@@ -85,7 +93,11 @@ class AgentRequest(BaseModel):
 # ── Health check ─────────────────────────────────────────────────────────────
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
+    return {
+        "status": "ok",
+        "timestamp": datetime.utcnow().isoformat(),
+        "platform": "vercel" if IS_VERCEL else "local",
+    }
 
 
 @app.get("/api/pubmed-config")
@@ -246,6 +258,26 @@ def run_agent(req: AgentRequest):
         },
     }
 
+    # Vercel serverless: run synchronously (threads + in-memory state do not
+    # survive across separate function invocations).
+    if IS_VERCEL:
+        _run_agent_thread(req)
+        if agent_status.get("error"):
+            return JSONResponse(
+                {"error": agent_status["error"], "sync": True, "task": agent_status["task"]},
+                status_code=500,
+            )
+        return {
+            "message":  "Agent completed",
+            "sync":     True,
+            "task":     agent_status["task"],
+            "done":     True,
+            "progress": agent_status["progress"],
+            "steps":    agent_status["steps"],
+            "result":   agent_status["result"],
+            "pubmed_rate": agent_status.get("pubmed_rate"),
+        }
+
     thread = threading.Thread(target=_run_agent_thread, args=(req,), daemon=True)
     thread.start()
 
@@ -320,8 +352,8 @@ def get_papers(limit: int = 50, offset: int = 0):
         return {"error": str(e), "papers": []}
 
 
-# ── Serve frontend static files ───────────────────────────────────────────────
-if os.path.exists(FRONTEND_DIR):
+# ── Serve frontend static files (local dev only; Vercel serves public/) ───────
+if os.path.exists(FRONTEND_DIR) and not IS_VERCEL:
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
 
