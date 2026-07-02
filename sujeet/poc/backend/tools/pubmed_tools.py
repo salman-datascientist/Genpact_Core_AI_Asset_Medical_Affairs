@@ -205,6 +205,8 @@ def _parse_article(article: dict) -> dict | None:
         pt_raw = art.get("PublicationTypeList", {}).get("PublicationType", [])
         if isinstance(pt_raw, dict):
             pt_raw = [pt_raw]
+        elif isinstance(pt_raw, str):
+            pt_raw = [pt_raw]
         pub_types = [
             p.get("#text", str(p)) if isinstance(p, dict) else str(p)
             for p in pt_raw
@@ -214,12 +216,17 @@ def _parse_article(article: dict) -> dict | None:
         mesh_raw = medline.get("MeshHeadingList", {}).get("MeshHeading", [])
         if isinstance(mesh_raw, dict):
             mesh_raw = [mesh_raw]
-        mesh_terms = [
-            m.get("DescriptorName", {}).get("#text", "")
-            if isinstance(m, dict) else ""
-            for m in mesh_raw
-        ]
-        mesh_terms = [m for m in mesh_terms if m]
+        mesh_terms = []
+        for m in mesh_raw:
+            if not isinstance(m, dict):
+                continue
+            desc = m.get("DescriptorName", "")
+            if isinstance(desc, dict):
+                term = desc.get("#text", "")
+            else:
+                term = str(desc) if desc else ""
+            if term:
+                mesh_terms.append(term)
 
         # DOI
         article_ids = pubmed_data.get("ArticleIdList", {}).get("ArticleId", [])

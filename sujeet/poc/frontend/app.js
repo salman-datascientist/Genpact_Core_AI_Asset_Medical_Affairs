@@ -71,48 +71,7 @@ function getPubMedTierCap() {
 }
 
 function buildPubMedMetrics(tier, rawRps) {
-  const cap = tier === 'with_api_key'
-    ? pubmedConfig.max_with_key
-    : pubmedConfig.max_without_key;
-  const rps = Math.min(Math.max(rawRps || 0, 0), cap);
-  const delaySec = rps > 0 ? (1 / rps + 0.02) : 0;
-  const utilization = cap > 0 ? Math.min((rps / cap) * 100, 100) : 0;
-  const estCalls = 5;
-
-  let status = 'safe';
-  let statusText = `Within NCBI limits — ${rps} req/s uses ${utilization.toFixed(0)}% of your ${cap} req/s allowance.`;
-  let badgeText = pubmedConfig.has_api_key ? 'API Key Active' : 'No API Key';
-
-  if (!Number.isFinite(rawRps) || rawRps <= 0) {
-    status = 'danger';
-    statusText = 'Enter a valid requests-per-second value greater than 0.';
-    badgeText = 'Invalid Rate';
-  } else if (rawRps > cap) {
-    status = 'danger';
-    statusText = `Rate exceeds NCBI limit — max ${cap} req/s for ${tier === 'with_api_key' ? 'API key' : 'no-key'} tier. Lower the value to avoid HTTP 429 errors.`;
-    badgeText = 'Over Limit';
-  } else if (utilization >= 85) {
-    status = 'warn';
-    statusText = `Approaching NCBI cap — ${utilization.toFixed(0)}% of ${cap} req/s used. Consider lowering to reduce 429 risk.`;
-    badgeText = 'Near Limit';
-  } else if (tier === 'with_api_key' && pubmedConfig.has_api_key) {
-    statusText = `Optimized for NCBI API key tier — ${rps} req/s with ~${delaySec.toFixed(2)}s spacing between calls.`;
-  } else {
-    statusText = `Conservative NCBI no-key tier — ${rps} req/s keeps you under the 3 req/s public limit.`;
-  }
-
-  return {
-    tier,
-    cap,
-    rps: Number.isFinite(rawRps) ? rawRps : 0,
-    delaySec,
-    utilization,
-    estCalls,
-    estDurationSec: estCalls * delaySec,
-    status,
-    statusText,
-    badgeText,
-  };
+  return PubMedMetrics.buildPubMedMetrics(tier, rawRps, pubmedConfig);
 }
 
 function computePubMedMetrics(rpsOverride) {
@@ -308,29 +267,22 @@ function validatePubMedRate(showAlert = true) {
   const tier = document.getElementById('f-pubmed-tier').value;
   const rpsEl = document.getElementById('f-pubmed-rps');
   const rps = parseFloat(rpsEl.value);
-  const cap = getPubMedTierCap();
+  const result = PubMedMetrics.validatePubMedRate(tier, rps, pubmedConfig);
 
-  if (!Number.isFinite(rps) || rps <= 0) {
-    if (showAlert) alert('Requests per second must be greater than 0.');
-    rpsEl.classList.add('input-error');
-    return false;
-  }
-
-  if (rps > cap) {
+  if (!result.valid) {
     if (showAlert) {
-      alert(
-        `Requests per second cannot exceed ${cap} for the selected NCBI tier.\n\n` +
-        pubmedConfig.disclosure
-      );
+      if (result.reason.includes('PUBMED_API_KEY')) {
+        alert('The "With API key" tier requires PUBMED_API_KEY in backend/.env.');
+      } else if (result.reason.includes('cannot exceed')) {
+        alert(
+          `Requests per second cannot exceed ${getPubMedTierCap()} for the selected NCBI tier.\n\n` +
+          pubmedConfig.disclosure
+        );
+      } else {
+        alert('Requests per second must be greater than 0.');
+      }
     }
     rpsEl.classList.add('input-error');
-    return false;
-  }
-
-  if (tier === 'with_api_key' && !pubmedConfig.has_api_key) {
-    if (showAlert) {
-      alert('The "With API key" tier requires PUBMED_API_KEY in backend/.env.');
-    }
     return false;
   }
 
